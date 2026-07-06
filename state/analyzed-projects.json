@@ -1,0 +1,116 @@
+{
+  "projects": [
+    {
+      "name": "Zackriya-Solutions/meetily",
+      "canonical_url": "https://github.com/Zackriya-Solutions/meetily",
+      "source": "GitHub Trending",
+      "analyzed_at": "2026-07-05T23:20:00+08:00",
+      "report_path": "/home/renault/workspace/github-training-analysis/reports/2026-07-05-2320-zackriya-solutions-meetily.html",
+      "reason": "A popular local-first AI meeting assistant with strong privacy, self-hosting, Rust desktop, and local model architecture signals."
+    },
+    {
+      "name": "facebook/astryx",
+      "canonical_url": "https://github.com/facebook/astryx",
+      "source": "GitHub Trending",
+      "analyzed_at": "2026-07-06T00:00:41+08:00",
+      "report_path": "/home/renault/workspace/github-training-analysis/reports/2026-07-06-0000-facebook-astryx.html",
+      "reason": "A trending Meta project that makes design-system knowledge available to AI coding agents through structured context, MCP-style tooling, and evaluation loops."
+    },
+    {
+      "name": "usestrix/strix",
+      "canonical_url": "https://github.com/usestrix/strix",
+      "source": "GitHub Trending",
+      "analyzed_at": "2026-07-06T01:02:19+08:00",
+      "report_path": "/home/renault/workspace/github-training-analysis/reports/2026-07-06-0102-usestrix-strix.html",
+      "reason": "A high-momentum open-source AI penetration testing system that combines autonomous agents, sandboxed execution, security tooling, scan-depth policy, and structured vulnerability reporting."
+    },
+    {
+      "name": "openai/codex-plugin-cc",
+      "canonical_url": "https://github.com/openai/codex-plugin-cc",
+      "source": "GitHub Trending",
+      "analyzed_at": "2026-07-06T02:00:49+08:00",
+      "report_path": "/home/renault/workspace/github-training-analysis/reports/2026-07-06-0200-openai-codex-plugin-cc.html",
+      "reason": "A high-momentum official OpenAI plugin that bridges Codex into Claude Code through slash commands, background jobs, review workflows, and session transfer."
+    },
+    {
+      "name": "alibaba/page-agent",
+      "canonical_url": "https://github.com/alibaba/page-agent",
+      "source": "GitHub Trending",
+      "analyzed_at": "2026-07-06T03:00:46+08:00",
+      "report_path": "/home/renault/workspace/github-training-analysis/reports/2026-07-06-0300-alibaba-page-agent.html",
+      "reason": "A high-momentum browser-native GUI agent SDK that embeds natural-language DOM control, extension support, and MCP integration directly into web products."
+    },
+    {
+      "name": "ChromeDevTools/chrome-devtools-mcp",
+      "canonical_url": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
+      "source": "GitHub Trending",
+      "analyzed_at": "2026-07-06T04:00:38+08:00",
+      "report_path": "/home/renault/workspace/github-training-analysis/reports/2026-07-06-0400-chromedevtools-chrome-devtools-mcp.html",
+      "reason": "A high-momentum official Chrome DevTools MCP server that gives coding agents live browser inspection, automation, performance, network, and memory debugging tools."
+    },
+    {
+      "name": "rommapp/romm",
+      "canonical_url": "https://github.com/rommapp/romm",
+      "source": "GitHub Trending",
+      "analyzed_at": "2026-07-06T05:03:13+08:00",
+      "report_path": "/home/renault/workspace/github-training-analysis/reports/2026-07-06-0503-rommapp-romm.html",
+      "reason": "A high-momentum self-hosted ROM manager and browser player with rich metadata integrations, FastAPI/Vue architecture, background scanning, real-time sockets, and a strong companion-client ecosystem."
+    },
+    {
+      "name": "ogulcancelik/herdr",
+      "canonical_url": "https://github.com/ogulcancelik/herdr",
+      "source": "GitHub Trending",
+      "analyzed_at": "2026-07-06T06:01:45+08:00",
+      "report_path": "/home/renault/workspace/github-training-analysis/reports/2026-07-06-0601-ogulcancelik-herdr.html",
+      "reason": "A high-momentum terminal-native AI agent multiplexer with real PTY panes, persistent server/client sessions, agent state detection, local socket orchestration, and a strong fit for multi-agent coding workflows."
+    },
+    {
+      "name": "CoplayDev/unity-mcp",
+      "canonical_url": "https://github.com/CoplayDev/unity-mcp",
+      "source": "GitHub Trending",
+      "analyzed_at": "2026-07-06T07:00:55+08:00",
+      "report_path": "/home/renault/workspace/github-training-analysis/reports/2026-07-06-0700-coplaydev-unity-mcp.html",
+      "reason": "A high-momentum Unity Editor MCP integration that turns scenes, assets, scripts, tests, profiling, documentation, and multi-editor routing into explicit agent tools."
+    },
+    {
+      "name": "alirezarezvani/claude-skills",
+      "canonical_url": "https://github.com/alirezarezvani/claude-skills",
+      "source": "GitHub Trending",
+      "analyzed_at": "2026-07-06T08:00:00+08:00",
+      "report_path": "/home/renault/workspace/github-training-analysis/reports/2026-07-06-0800-alirezarezvani-claude-skills.html",
+      "reason": "A high-momentum cross-agent skills and plugin library that packages domain expertise, scripts, commands, personas, and conversion tooling for Claude Code, Codex, Gemini CLI, Cursor, and other coding agents."
+    },
+    {
+      "name": "immich-app/immich",
+      "canonical_url": "https://github.com/immich-app/immich",
+      "source": "GitHub Trending",
+      "analyzed_at": "2026-07-06T09:00:58+08:00",
+      "report_path": "/home/renault/workspace/github-training-analysis/reports/2026-07-06-0900-immich-app-immich.html",
+      "reason": "A high-momentum self-hosted photo and video platform whose v3 release highlights mature media pipelines, generated client contracts, Postgres/VectorChord search, queue-backed jobs, and isolated ML services."
+    },
+    {
+      "name": "ruvnet/RuView",
+      "canonical_url": "https://github.com/ruvnet/RuView",
+      "source": "GitHub Trending",
+      "analyzed_at": "2026-07-06T11:01:55+08:00",
+      "report_path": "/home/renault/workspace/github-training-analysis/reports/2026-07-06-1101-ruvnet-ruview.html",
+      "reason": "A high-momentum WiFi sensing platform with a broad Rust edge architecture, smart-home integrations, public model artifacts, and an unusually explicit proof/retraction ledger."
+    },
+    {
+      "name": "harvard-edge/cs249r_book",
+      "canonical_url": "https://github.com/harvard-edge/cs249r_book",
+      "source": "GitHub Trending",
+      "analyzed_at": "2026-07-06T12:00:52+08:00",
+      "report_path": "/home/renault/workspace/github-training-analysis/reports/2026-07-06-1200-harvard-edge-cs249r-book.html",
+      "reason": "A high-momentum integrated Machine Learning Systems curriculum that combines a two-volume textbook, browser labs, TinyTorch, hardware kits, MLSys·im, educator materials, and production-style publishing automation."
+    },
+    {
+      "name": "Leonxlnx/taste-skill",
+      "canonical_url": "https://github.com/Leonxlnx/taste-skill",
+      "source": "GitHub Trending",
+      "analyzed_at": "2026-07-06T13:02:18+08:00",
+      "report_path": "/home/renault/workspace/github-training-analysis/reports/2026-07-06-1302-leonxlnx-taste-skill.html",
+      "reason": "A high-momentum portable agent-skills repository that packages frontend design taste, anti-pattern checks, design-system selection, and pre-flight review into installable SKILL.md workflows."
+    }
+  ]
+}

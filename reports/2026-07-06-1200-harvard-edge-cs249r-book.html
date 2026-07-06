@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>harvard-edge/cs249r_book - GitHub Trending Analysis</title>
+  <style>
+    :root {
+      --paper: #f4f1ea;
+      --ink: #171717;
+      --muted: #6a665d;
+      --line: #d9d2c3;
+      --panel: #fffaf0;
+      --panel-strong: #ece3d0;
+      --accent: #b45f1c;
+      --accent-dark: #783b12;
+      --code: #2b2925;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+      letter-spacing: 0;
+    }
+
+    a { color: var(--accent-dark); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    .page { max-width: 1180px; margin: 0 auto; padding: 28px; }
+
+    .eyebrow {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      border-top: 1px solid var(--ink);
+      padding-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-weight: 700;
+    }
+
+    .hero {
+      min-height: 72vh;
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(280px, .65fr);
+      gap: 44px;
+      align-items: end;
+      padding: 44px 0 34px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h1 {
+      margin: 18px 0 22px;
+      max-width: 850px;
+      font-size: clamp(46px, 8vw, 98px);
+      line-height: .95;
+      letter-spacing: 0;
+      font-weight: 860;
+    }
+
+    .dek {
+      max-width: 690px;
+      font-size: clamp(18px, 2.1vw, 24px);
+      color: #34312b;
+      margin: 0;
+    }
+
+    .hero-panel {
+      border-left: 4px solid var(--accent);
+      background: var(--panel);
+      padding: 24px;
+      box-shadow: 0 18px 50px rgba(77, 59, 32, .10);
+    }
+
+    .repo {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 15px;
+      color: var(--code);
+      overflow-wrap: anywhere;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      margin-top: 22px;
+      background: var(--line);
+      border: 1px solid var(--line);
+    }
+
+    .stat {
+      background: var(--paper);
+      padding: 15px;
+      min-height: 86px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 25px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      font-weight: 800;
+    }
+
+    section {
+      padding: 54px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 34px;
+      align-items: start;
+      margin-bottom: 26px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--accent-dark);
+    }
+
+    .section-head p {
+      margin: 0;
+      max-width: 780px;
+      font-size: 21px;
+      line-height: 1.35;
+      color: #2d2a25;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+
+    .note, .cell {
+      border-top: 1px solid var(--ink);
+      padding-top: 18px;
+    }
+
+    .note h3, .cell h3 {
+      margin: 0 0 10px;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    .note p, .cell p, li {
+      color: #49453d;
+      margin-top: 0;
+    }
+
+    .map {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .map-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      padding: 18px;
+      min-height: 168px;
+    }
+
+    .map-card b {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .map-card small {
+      display: inline-block;
+      color: var(--accent-dark);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      margin-bottom: 16px;
+    }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 26px;
+      align-items: start;
+    }
+
+    .rail {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 24px;
+    }
+
+    .rail h3 { margin: 0 0 14px; font-size: 28px; line-height: 1.05; }
+    .rail p { color: #ded6c8; margin: 0 0 16px; }
+    .rail code {
+      display: block;
+      padding: 12px;
+      background: rgba(255,255,255,.08);
+      color: #fff4e4;
+      overflow-wrap: anywhere;
+      margin-top: 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+    }
+
+    .list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .list li {
+      display: grid;
+      grid-template-columns: 170px minmax(0, 1fr);
+      gap: 18px;
+      padding: 17px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .list b { color: var(--ink); }
+
+    .callout {
+      background: var(--panel-strong);
+      padding: 28px;
+      margin: 24px 0 0;
+      border-left: 4px solid var(--accent);
+      font-size: 20px;
+      line-height: 1.35;
+    }
+
+    .source-list {
+      columns: 2;
+      column-gap: 44px;
+      padding-left: 18px;
+    }
+
+    .source-list li {
+      break-inside: avoid;
+      margin: 0 0 10px;
+      font-size: 14px;
+    }
+
+    footer {
+      padding: 34px 0 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 860px) {
+      .page { padding: 20px; }
+      .hero, .section-head, .two-col, .matrix, .list li { grid-template-columns: 1fr; }
+      .hero { min-height: auto; padding-top: 26px; }
+      .map { grid-template-columns: 1fr; }
+      .source-list { columns: 1; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div>
+        <div class="eyebrow">GitHub Trending analysis · July 6, 2026 · Source: GitHub Trending</div>
+        <h1>Machine learning systems, packaged as a whole curriculum.</h1>
+        <p class="dek">The trending repository <strong>harvard-edge/cs249r_book</strong> is not just a book repo. It is an integrated learning system for AI engineering: textbook volumes, browser labs, a from-scratch ML framework, hardware kits, infrastructure simulation, instructor material, and interview practice all maintained together.</p>
+      </div>
+      <aside class="hero-panel">
+        <div class="repo">github.com/harvard-edge/cs249r_book</div>
+        <div class="stat-grid">
+          <div class="stat"><strong>26,914</strong><span>stars</span></div>
+          <div class="stat"><strong>3,203</strong><span>forks</span></div>
+          <div class="stat"><strong>2026-07-05</strong><span>last push UTC</span></div>
+          <div class="stat"><strong>17,848</strong><span>cloned files</span></div>
+        </div>
+      </aside>
+    </header>
+
+    <section>
+      <div class="section-head">
+        <h2>Selection</h2>
+        <p>Selected because it appeared on GitHub Trending, had not been analyzed in the local state file, and combines high public interest with unusually broad engineering surface area.</p>
+      </div>
+      <div class="two-col">
+        <div class="note">
+          <h3>What it does</h3>
+          <p>It publishes <em>Machine Learning Systems: Principles and Practices of Engineering Artificially Intelligent Systems</em> and surrounds the text with runnable pedagogy. The repository describes a learning loop of reading, exploring, building, modeling, deploying, practicing, and teaching.</p>
+        </div>
+        <div class="note">
+          <h3>Why it is notable now</h3>
+          <p>The repo’s 2026 refresh ties directly into current demand for AI engineering skills: not just model training, but the systems work around reliability, cost, hardware constraints, performance, deployment, and evaluation. That positioning explains why a courseware repository can trend like a software project.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>Architecture</h2>
+        <p>The core design choice is monorepo integration. Instead of scattering a textbook, notebooks, code labs, simulator, slides, and educator material across separate projects, the repository treats the curriculum itself as the product.</p>
+      </div>
+      <div class="map">
+        <div class="map-card"><small>Text</small><b>Book and site</b><p>Quarto sources for the public site and two-volume textbook, with GitHub Pages-oriented publishing and separate validation workflows.</p></div>
+        <div class="map-card"><small>Practice</small><b>Co-Labs</b><p>Interactive Marimo notebooks intended to run in the browser via WebAssembly, using prediction-first exercises to expose systems trade-offs.</p></div>
+        <div class="map-card"><small>Build</small><b>TinyTorch</b><p>A 20-module from-scratch NumPy ML framework covering tensors, autograd, CNNs, attention, transformers, profiling, quantization, and benchmarking.</p></div>
+        <div class="map-card"><small>Deploy</small><b>Hardware kits</b><p>Arduino, Seeed, Grove, Raspberry Pi, and edge-device material that forces learners to confront memory, power, latency, and sensor realities.</p></div>
+        <div class="map-card"><small>Model</small><b>MLSys·im</b><p>A Python analytical modeling package for workloads, hardware, infrastructure, systems topology, and solver/optimizer workflows.</p></div>
+        <div class="map-card"><small>Teach</small><b>Instructor stack</b><p>Syllabi, slides, rubrics, staff/interview material, and a content pipeline backed by many targeted GitHub Actions workflows.</p></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>Technical Design</h2>
+        <p>The strongest implementation idea is that every learning surface is backed by tooling, tests, and publishing automation rather than being treated as static content.</p>
+      </div>
+      <div class="matrix">
+        <div>
+          <ul class="list">
+            <li><b>Publishing pipeline</b><span>Quarto powers the landing site, book, slides, and instructor material. Dedicated workflows validate, preview, publish, check links, run visual smoke tests, and purge Cloudflare caches.</span></li>
+            <li><b>Executable pedagogy</b><span>Co-Labs use interactive notebook structure: briefing, prediction lock, instruments, reveal, and synthesis. That makes the reader commit to a hypothesis before seeing a simulation.</span></li>
+            <li><b>Framework reconstruction</b><span>TinyTorch teaches ML systems by having learners build framework internals. The module sequence mirrors the stack: tensors, autograd, layers, training, vision, attention, optimization, and benchmarking.</span></li>
+            <li><b>Analytical simulation</b><span>MLSys·im uses a five-layer model: workload representation, hardware registry, infrastructure, systems/topology, and execution resolvers. It offers CLI and JSON output for automation.</span></li>
+            <li><b>Quality gates</b><span>The repo has separate validation workflows for book, labs, kits, TinyTorch, MLSys·im, slides, instructor content, StaffML, newsletters, and infrastructure. That is a production-style discipline applied to education.</span></li>
+          </ul>
+        </div>
+        <aside class="rail">
+          <h3>Design pattern worth copying</h3>
+          <p>Make the repository boundary match the user journey. Here, the user is not only a reader; they are a learner, builder, instructor, contributor, and sometimes interviewer.</p>
+          <code>Read -> Explore -> Build -> Model -> Deploy -> Practice -> Teach</code>
+        </aside>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>Product Insight</h2>
+        <p>The repo succeeds because it names a gap: the industry is building AI systems faster than it is teaching people to engineer them end to end.</p>
+      </div>
+      <div class="two-col">
+        <div class="cell">
+          <h3>It sells a discipline, not a chapter list</h3>
+          <p>The project frames “AI engineering” as a field adjacent to software and computer engineering. That gives the curriculum a stronger identity than a typical course page.</p>
+        </div>
+        <div class="cell">
+          <h3>The artifacts reinforce each other</h3>
+          <p>The textbook builds concepts, Co-Labs expose trade-offs, TinyTorch builds mechanism, MLSys·im models infrastructure, and kits expose hardware constraints. Each part answers a limitation in the others.</p>
+        </div>
+      </div>
+      <div class="callout">The repository’s central product move is to reduce the distance between explanation and experience. A learner can move from a concept to a notebook, framework module, simulator run, or hardware exercise without leaving the curriculum system.</div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>Strengths & Risks</h2>
+        <p>Its scale is the advantage and the liability. The project can teach systems thinking because it is itself a system, but that also raises maintenance and governance pressure.</p>
+      </div>
+      <div class="two-col">
+        <div class="cell">
+          <h3>Strengths</h3>
+          <ul>
+            <li>Rich end-to-end scope across theory, software, infrastructure, hardware, assessment, and teaching.</li>
+            <li>Strong automation posture, with many component-specific validation and publish workflows.</li>
+            <li>Practical positioning around current AI engineering pain points: cost, latency, memory, power, scaling, and reliability.</li>
+            <li>Large community surface: 26.9k stars, 3.2k forks, and visible contributor activity.</li>
+          </ul>
+        </div>
+        <div class="cell">
+          <h3>Risks and limitations</h3>
+          <ul>
+            <li>Very broad scope can make onboarding difficult; learners may need clear paths to avoid being overwhelmed.</li>
+            <li>Several components are marked as early release or actively iterated in 2026, so API and content stability should not be assumed everywhere.</li>
+            <li>MLSys·im is intentionally analytical, not a substitute for production benchmarking or observability.</li>
+            <li>Large generated and media-heavy assets increase repository weight and workflow complexity.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>What Developers Can Learn</h2>
+        <p>The repository is a case study in turning knowledge into an engineered product rather than a pile of documents.</p>
+      </div>
+      <ul class="list">
+        <li><b>Teach through interfaces</b><span>Prediction locks, notebooks, CLI scorecards, simulator schemas, and hardware kits are interfaces for thinking, not just content delivery mechanisms.</span></li>
+        <li><b>Use automation for credibility</b><span>Educational projects need CI too. Link checks, validation jobs, PDF builds, preview deploys, and publish guards make large learning systems maintainable.</span></li>
+        <li><b>Expose constraints early</b><span>The best systems material makes constraints visible: memory budgets, network saturation, latency, power, carbon intensity, failure, and queueing.</span></li>
+        <li><b>Design the repo around outcomes</b><span>Directory structure mirrors roles and outcomes: students read and build; instructors teach; practitioners model; contributors improve shared assets.</span></li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>Sources</h2>
+        <p>Primary sources used for this report.</p>
+      </div>
+      <ol class="source-list">
+        <li><a href="https://github.com/trending">GitHub Trending</a>, fetched July 6, 2026, showing <code>harvard-edge/cs249r_book</code>.</li>
+        <li><a href="https://github.com/harvard-edge/cs249r_book">Repository: harvard-edge/cs249r_book</a>.</li>
+        <li><a href="https://api.github.com/repos/harvard-edge/cs249r_book">GitHub repository API metadata</a>.</li>
+        <li><a href="https://raw.githubusercontent.com/harvard-edge/cs249r_book/dev/README.md">Root README on dev branch</a>.</li>
+        <li><a href="https://github.com/harvard-edge/cs249r_book/tree/dev/tinytorch">TinyTorch component</a>.</li>
+        <li><a href="https://github.com/harvard-edge/cs249r_book/tree/dev/labs">Co-Labs component</a>.</li>
+        <li><a href="https://github.com/harvard-edge/cs249r_book/tree/dev/mlsysim">MLSys·im component</a>.</li>
+        <li><a href="https://github.com/harvard-edge/cs249r_book/tree/dev/.github/workflows">GitHub Actions workflows</a>.</li>
+        <li><a href="https://mlsysbook.ai/">Public MLSysBook site</a>.</li>
+      </ol>
+    </section>
+
+    <footer>
+      Generated locally for the hourly cc-connect GitHub Trending analysis task. Report file opens directly in a browser; no external build step is required.
+    </footer>
+  </main>
+</body>
+</html>
