@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Strix: Engineering Analysis of an Agentic Pentesting System</title>
+  <style>
+    :root {
+      --bg: #f6f7f2;
+      --ink: #111713;
+      --muted: #5d655d;
+      --line: #d8ddd2;
+      --panel: #ffffff;
+      --soft: #ebeee7;
+      --accent: #28784d;
+      --accent-dark: #185236;
+      --code: #172018;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        linear-gradient(90deg, rgba(17, 23, 19, 0.035) 1px, transparent 1px) 0 0 / 40px 40px,
+        var(--bg);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    a { color: var(--accent-dark); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: 0.94em; }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .hero {
+      min-height: 76vh;
+      display: grid;
+      grid-template-columns: minmax(0, 1.18fr) minmax(320px, 0.82fr);
+      gap: 48px;
+      align-items: end;
+      padding: 72px 0 44px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--accent-dark);
+      font-size: 12px;
+      font-weight: 760;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .kicker::before {
+      content: "";
+      width: 30px;
+      height: 2px;
+      background: var(--accent);
+      display: inline-block;
+    }
+
+    h1 {
+      margin: 22px 0 20px;
+      max-width: 870px;
+      font-size: clamp(46px, 8vw, 104px);
+      line-height: 0.93;
+      letter-spacing: 0;
+    }
+
+    .dek {
+      max-width: 720px;
+      color: #2e352f;
+      font-size: clamp(18px, 2.3vw, 25px);
+      line-height: 1.28;
+    }
+
+    .hero-meta {
+      align-self: stretch;
+      display: grid;
+      align-content: end;
+      gap: 14px;
+    }
+
+    .statbox {
+      background: var(--ink);
+      color: #f7fbf4;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 20px 55px rgba(37, 48, 38, 0.16);
+    }
+
+    .statbox .label {
+      color: #a8b9aa;
+      font-size: 12px;
+      font-weight: 760;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .statbox .value {
+      display: block;
+      margin-top: 8px;
+      font-size: 32px;
+      line-height: 1.05;
+      font-weight: 820;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .meta-grid div {
+      background: rgba(255, 255, 255, 0.74);
+      padding: 18px;
+      min-height: 92px;
+    }
+
+    .meta-grid span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 730;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .meta-grid strong {
+      display: block;
+      margin-top: 9px;
+      font-size: 19px;
+      line-height: 1.12;
+    }
+
+    section {
+      padding: 54px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr);
+      gap: 52px;
+      align-items: start;
+      margin-bottom: 28px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(25px, 3.4vw, 42px);
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      margin: 0;
+      max-width: 780px;
+      color: #384139;
+      font-size: 18px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(290px, 0.58fr);
+      gap: 34px;
+      align-items: start;
+    }
+
+    .text-block {
+      background: rgba(255, 255, 255, 0.62);
+      border-top: 3px solid var(--accent);
+      padding: 28px;
+    }
+
+    .text-block p:first-child { margin-top: 0; }
+    .text-block p:last-child { margin-bottom: 0; }
+
+    .side-note {
+      border: 1px solid var(--line);
+      background: var(--soft);
+      padding: 24px;
+      border-radius: 8px;
+    }
+
+    .side-note h3,
+    .mini h3,
+    .risk h3 {
+      margin: 0 0 12px;
+      font-size: 16px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .side-note ul,
+    .risk ul {
+      margin: 0;
+      padding-left: 19px;
+      color: #384139;
+    }
+
+    .side-note li,
+    .risk li { margin: 9px 0; }
+
+    .diagram {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 30px;
+    }
+
+    .node {
+      min-height: 150px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 17px;
+      position: relative;
+    }
+
+    .node::after {
+      content: "";
+      position: absolute;
+      top: 30px;
+      right: -11px;
+      width: 11px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .node:last-child::after { display: none; }
+
+    .node b {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+
+    .node span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .split-list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      border: 1px solid var(--line);
+      background: var(--line);
+      gap: 1px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .mini {
+      background: rgba(255,255,255,0.78);
+      padding: 24px;
+    }
+
+    .mini p {
+      margin: 0;
+      color: #3d463e;
+    }
+
+    .evidence-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(255,255,255,0.76);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      display: table;
+    }
+
+    .evidence-table th,
+    .evidence-table td {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .evidence-table th {
+      width: 230px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .evidence-table tr:last-child th,
+    .evidence-table tr:last-child td { border-bottom: 0; }
+
+    .risk-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .risk {
+      padding: 23px;
+      background: rgba(255,255,255,0.72);
+      border-left: 3px solid var(--accent);
+    }
+
+    .learn {
+      display: grid;
+      grid-template-columns: 0.78fr 1.22fr;
+      gap: 32px;
+      align-items: stretch;
+    }
+
+    .quote-panel {
+      background: var(--ink);
+      color: #f4f8f1;
+      border-radius: 8px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 280px;
+    }
+
+    .quote-panel strong {
+      font-size: 30px;
+      line-height: 1.08;
+    }
+
+    .quote-panel span {
+      margin-top: 28px;
+      color: #a8b9aa;
+    }
+
+    .lessons {
+      display: grid;
+      gap: 14px;
+    }
+
+    .lesson {
+      background: rgba(255,255,255,0.75);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .lesson b { display: block; margin-bottom: 6px; }
+    .lesson p { margin: 0; color: #3b433c; }
+
+    .sources {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 22px;
+      margin: 20px 0 0;
+      padding: 0;
+      list-style: none;
+      font-size: 14px;
+    }
+
+    .sources li {
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+      overflow-wrap: anywhere;
+    }
+
+    footer {
+      padding: 30px 0 56px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .section-head,
+      .two-col,
+      .learn {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: auto;
+        padding-top: 48px;
+      }
+
+      .diagram,
+      .split-list,
+      .risk-grid,
+      .sources {
+        grid-template-columns: 1fr;
+      }
+
+      .node::after { display: none; }
+    }
+
+    @media (max-width: 560px) {
+      .page { width: min(100% - 22px, 1180px); }
+      .meta-grid { grid-template-columns: 1fr; }
+      .text-block,
+      .side-note,
+      .quote-panel,
+      .mini,
+      .risk,
+      .lesson { padding: 18px; }
+      .evidence-table,
+      .evidence-table tbody,
+      .evidence-table tr,
+      .evidence-table th,
+      .evidence-table td { display: block; width: 100%; }
+      .evidence-table th { padding-bottom: 6px; }
+      .evidence-table td { padding-top: 0; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div>
+        <div class="kicker">GitHub Trending analysis · July 6, 2026</div>
+        <h1>Strix turns security scanning into an agent runtime.</h1>
+        <p class="dek">The notable move is not simply using an LLM for vulnerability descriptions. Strix wraps autonomous agents in sandboxed execution, a pentest toolchain, scan-depth policy, skills, and report artifacts so findings are expected to arrive with proof, context, and remediation paths.</p>
+      </div>
+      <aside class="hero-meta" aria-label="Repository snapshot">
+        <div class="statbox">
+          <span class="label">Selected repository</span>
+          <span class="value">usestrix/strix</span>
+        </div>
+        <div class="meta-grid">
+          <div><span>Stars</span><strong>36.8k</strong></div>
+          <div><span>Forks</span><strong>3.7k</strong></div>
+          <div><span>Language</span><strong>Python</strong></div>
+          <div><span>License</span><strong>Apache-2.0</strong></div>
+        </div>
+      </aside>
+    </header>
+
+    <section>
+      <div class="section-head">
+        <h2>Why this project is interesting now</h2>
+        <p>Strix sits at the intersection of three active developer concerns: agentic coding tools, application security, and CI-time automation. It is packaged as an open-source AI penetration testing CLI, but its deeper product bet is that security tools should move from passive alerts to validated exploit narratives.</p>
+      </div>
+      <div class="two-col">
+        <div class="text-block">
+          <p>The README positions Strix as autonomous AI pentesting agents that dynamically run code, find vulnerabilities, and validate them through proofs of concept. The project was worth selecting because it is trending, popular by repository metrics, recently active, and technically rich enough to inspect beyond its landing message.</p>
+          <p>Its adoption signal is unusually strong for an application-security CLI: tens of thousands of stars, thousands of forks, open issues, a PyPI package, docs, cloud positioning, CI examples, and an Apache-2.0 license. That combination suggests a project trying to bridge open-source developer workflow with a commercial continuous-pentesting platform.</p>
+        </div>
+        <aside class="side-note">
+          <h3>Selection basis</h3>
+          <ul>
+            <li>Found through GitHub Trending daily discovery.</li>
+            <li>Not present in the local analyzed-projects state file.</li>
+            <li>Primary source material includes repository metadata, README, docs, package metadata, and selected implementation files.</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>What Strix does</h2>
+        <p>Strix is a developer-facing penetration testing system. It can scan a local codebase, a GitHub repository, or a running web application, then produce vulnerability reports that include severity, reproduction context, proof-of-concept details, and remediation guidance.</p>
+      </div>
+      <table class="evidence-table">
+        <tr>
+          <th>Targets</th>
+          <td>Local repositories, remote GitHub repositories, deployed web apps, and multi-target scans that combine source code with a live endpoint.</td>
+        </tr>
+        <tr>
+          <th>Modes</th>
+          <td><code>quick</code> for CI and pull requests, <code>standard</code> for routine review, and <code>deep</code> for longer security audits. The docs describe deep mode as the default and say it combines broad source-aware triage with dynamic validation.</td>
+        </tr>
+        <tr>
+          <th>Tooling</th>
+          <td>Browser automation, HTTP interception proxy, terminal access, sandbox tools, Python runtime, file editing, web search, notes, and reporting.</td>
+        </tr>
+        <tr>
+          <th>Output</th>
+          <td>Run records, vulnerability JSON and markdown, executive reports, SARIF output, and usage accounting are represented in the reporting layer.</td>
+        </tr>
+      </table>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>Core architecture</h2>
+        <p>The codebase is organized like an agent product rather than a scanner script. The central scan runner creates a sandbox session, builds a configured root agent, attaches persistence, coordinates child agents, streams events, and delegates reporting to a separate state layer.</p>
+      </div>
+      <div class="diagram" aria-label="Architecture flow">
+        <div class="node"><b>CLI and TUI</b><span><code>strix.interface</code> handles entry points, terminal UI, renderers, and non-interactive execution.</span></div>
+        <div class="node"><b>Scan runner</b><span><code>run_strix_scan</code> resolves model settings, scope, agent state, budget hooks, and resume behavior.</span></div>
+        <div class="node"><b>Sandbox runtime</b><span><code>session_manager</code> creates container sessions with source entries, bind mounts, proxy env, and a Caido sidecar.</span></div>
+        <div class="node"><b>Agent tool layer</b><span>Browser, proxy, shell, notes, todo, skill loading, reporting, and graph tools are exposed as controlled actions.</span></div>
+        <div class="node"><b>Reports</b><span><code>ReportState</code> stores findings, run metadata, SARIF provenance, model usage, and final artifacts.</span></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>Implementation ideas worth studying</h2>
+        <p>Strix’s value comes from stitching existing primitives into a workflow where an agent can investigate and verify, not just summarize. The implementation shows several reusable patterns for agentic developer tools.</p>
+      </div>
+      <div class="split-list">
+        <div class="mini">
+          <h3>Skills as operational memory</h3>
+          <p>The repository includes markdown skills for scan modes, frameworks, cloud targets, protocols, tools, and vulnerability classes. This makes domain behavior inspectable and easier to extend than hard-coding every tactic in Python.</p>
+        </div>
+        <div class="mini">
+          <h3>Sandbox first</h3>
+          <p>The runtime builds container sessions and exposes local code under <code>/workspace</code>. Proxy variables route in-container HTTP traffic through Caido, keeping dynamic investigation observable.</p>
+        </div>
+        <div class="mini">
+          <h3>Artifacts over chat</h3>
+          <p>The reporting layer treats findings as structured product artifacts. That matters for security work because a finding without reproduction, impact, and remediation is not useful in a pull request or audit.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>Product and design insight</h2>
+        <p>The project’s strongest product idea is shifting developer security from periodic expert service to repeatable agent workflow. The CLI examples make the low-friction path obvious, while the cloud positioning points to continuous pentesting, autofix pull requests, and team integrations.</p>
+      </div>
+      <div class="two-col">
+        <div class="text-block">
+          <p>Security tools often struggle with trust: static scanners generate too much noise, while manual pentests are slow and expensive. Strix attacks that gap by promising validated findings with proof-of-concept evidence. Whether it fully delivers depends on target complexity and model behavior, but the product direction is coherent.</p>
+          <p>The use of scan modes is also a good product constraint. A pull request check needs a different latency, budget, and confidence profile than a pre-production audit. Encoding those modes gives developers a vocabulary for when to run the tool and what tradeoff they are buying.</p>
+        </div>
+        <aside class="side-note">
+          <h3>Why popularity makes sense</h3>
+          <ul>
+            <li>Developers are already using agents to write code; using agents to attack code is an intuitive next step.</li>
+            <li>Security teams want better evidence, not just more alerts.</li>
+            <li>CI integration converts a complex discipline into a familiar workflow primitive.</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>Strengths, risks, and limitations</h2>
+        <p>Strix is ambitious, and the ambition creates real engineering risk. The useful reading is to separate the solid system design from the places where agentic security remains inherently hard.</p>
+      </div>
+      <div class="risk-grid">
+        <div class="risk">
+          <h3>Strengths</h3>
+          <ul>
+            <li>Combines source-aware analysis with dynamic validation instead of relying on one signal.</li>
+            <li>Uses a real sandbox and pentest tools, including browser and proxy capabilities.</li>
+            <li>Provides CI/headless mode and non-zero exit behavior for pipeline use.</li>
+            <li>Structured reporting and SARIF output improve integration with existing security workflows.</li>
+          </ul>
+        </div>
+        <div class="risk">
+          <h3>Risks</h3>
+          <ul>
+            <li>LLM-driven testing can miss vulnerabilities, overfit to common classes, or produce misleading exploit narratives.</li>
+            <li>Dynamic testing against live systems must be scoped carefully to avoid unsafe traffic or data modification.</li>
+            <li>Deep scans imply meaningful model cost, time, and operational complexity.</li>
+            <li>Prompt injection and tool misuse are especially important because the agent can browse, execute commands, and edit files.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>What developers can learn</h2>
+        <p>Even for teams that never use Strix, the repository is a useful reference for building agent systems around durable workflows rather than open-ended chat.</p>
+      </div>
+      <div class="learn">
+        <div class="quote-panel">
+          <strong>The agent is less interesting than the operating environment around it.</strong>
+          <span>Strix’s durable advantage is orchestration: tools, sandbox, skills, scope, persistence, and artifacts.</span>
+        </div>
+        <div class="lessons">
+          <div class="lesson"><b>Make agent behavior inspectable.</b><p>Markdown skills and explicit scan modes let reviewers understand and tune the tool’s domain assumptions.</p></div>
+          <div class="lesson"><b>Separate execution from evidence.</b><p>The runner owns scan flow; the report state owns findings, provenance, and export formats. That separation is critical for auditable systems.</p></div>
+          <div class="lesson"><b>Prefer bounded autonomy.</b><p>Agents are most useful when their world is constrained by target scope, tools, budgets, and artifacts that downstream humans can evaluate.</p></div>
+          <div class="lesson"><b>Design for CI from the start.</b><p>Headless mode, pull-request scoping, exit codes, and SARIF are product features, not afterthoughts, when the user is a development team.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>Sources</h2>
+        <p>Primary sources were used where practical. GitHub Trending was used for discovery; repository metadata and raw project files were used for the technical analysis.</p>
+      </div>
+      <ul class="sources">
+        <li><a href="https://github.com/trending?since=daily">GitHub Trending, daily</a></li>
+        <li><a href="https://github.com/usestrix/strix">usestrix/strix repository</a></li>
+        <li><a href="https://api.github.com/repos/usestrix/strix">GitHub repository API metadata</a></li>
+        <li><a href="https://raw.githubusercontent.com/usestrix/strix/main/README.md">Repository README</a></li>
+        <li><a href="https://raw.githubusercontent.com/usestrix/strix/main/pyproject.toml">pyproject.toml</a></li>
+        <li><a href="https://raw.githubusercontent.com/usestrix/strix/main/docs/usage/scan-modes.mdx">Docs: scan modes</a></li>
+        <li><a href="https://raw.githubusercontent.com/usestrix/strix/main/docs/tools/overview.mdx">Docs: agent tools</a></li>
+        <li><a href="https://raw.githubusercontent.com/usestrix/strix/main/strix/core/runner.py">Source: scan runner</a></li>
+        <li><a href="https://raw.githubusercontent.com/usestrix/strix/main/strix/runtime/session_manager.py">Source: runtime session manager</a></li>
+        <li><a href="https://raw.githubusercontent.com/usestrix/strix/main/strix/report/state.py">Source: report state</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="page">
+    Generated locally for the cc-connect scheduled GitHub Trending analysis task. Report file is self-contained and can be opened directly in a browser.
+  </footer>
+</body>
+</html>

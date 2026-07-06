@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CoplayDev/unity-mcp: Engineering Analysis</title>
+  <style>
+    :root {
+      --ink: #111827;
+      --muted: #5b6472;
+      --line: #d9dee7;
+      --soft: #f4f6f9;
+      --paper: #fbfcfe;
+      --accent: #0b66d8;
+      --accent-dark: #064c9f;
+      --panel: #ffffff;
+      --code: #172033;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+    a { color: var(--accent-dark); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    .page { max-width: 1180px; margin: 0 auto; padding: 30px 22px 56px; }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(280px, .8fr);
+      gap: 34px;
+      min-height: 420px;
+      align-items: end;
+      padding: 34px 0 30px;
+      border-bottom: 1px solid var(--line);
+    }
+    .eyebrow {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--accent-dark);
+      font-weight: 750;
+      margin-bottom: 18px;
+    }
+    h1 {
+      font-size: clamp(42px, 6vw, 78px);
+      line-height: .96;
+      letter-spacing: 0;
+      margin: 0 0 20px;
+      max-width: 880px;
+    }
+    .dek {
+      font-size: clamp(18px, 2vw, 23px);
+      max-width: 760px;
+      color: #2e3846;
+      margin: 0;
+    }
+    .brief {
+      border-left: 3px solid var(--accent);
+      padding: 18px 0 18px 22px;
+      color: var(--muted);
+      background: linear-gradient(90deg, rgba(11,102,216,.07), transparent 68%);
+    }
+    .brief strong { display: block; color: var(--ink); font-size: 15px; margin-bottom: 5px; }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      margin: 28px 0 44px;
+    }
+    .metric { background: var(--panel); padding: 18px; min-height: 96px; }
+    .metric b { display: block; font-size: 24px; line-height: 1.1; }
+    .metric span { display: block; margin-top: 8px; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+    section { margin: 46px 0; }
+    .section-head {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 28px;
+      align-items: start;
+      border-top: 1px solid var(--line);
+      padding-top: 24px;
+    }
+    h2 { margin: 0; font-size: 25px; line-height: 1.15; }
+    h3 { margin: 0 0 9px; font-size: 16px; }
+    p { margin: 0 0 16px; color: #283342; }
+    .lead { font-size: 18px; color: #1c2736; max-width: 790px; }
+    .grid-two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .panel p:last-child { margin-bottom: 0; }
+    .stack { display: grid; gap: 14px; }
+    .architecture {
+      display: grid;
+      grid-template-columns: 1fr 42px 1fr 42px 1fr;
+      align-items: stretch;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .node {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 8px;
+      padding: 18px;
+      min-height: 176px;
+    }
+    .node .tag { font: 700 11px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--accent-dark); text-transform: uppercase; letter-spacing: .08em; }
+    .arrow {
+      align-self: center;
+      height: 1px;
+      background: var(--accent);
+      position: relative;
+    }
+    .arrow:after {
+      content: "";
+      position: absolute;
+      right: -1px;
+      top: -4px;
+      border-left: 7px solid var(--accent);
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+    }
+    .table {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 170px 1fr;
+      gap: 16px;
+      padding: 15px 18px;
+      border-top: 1px solid var(--line);
+    }
+    .row:first-child { border-top: 0; }
+    .row b { color: var(--code); }
+    ul { margin: 0; padding-left: 18px; color: #283342; }
+    li { margin: 8px 0; }
+    .callout {
+      border: 1px solid #bad2f4;
+      border-left: 4px solid var(--accent);
+      background: #f1f6fd;
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .sources {
+      font-size: 14px;
+      color: var(--muted);
+      columns: 2;
+      column-gap: 34px;
+    }
+    .sources li { break-inside: avoid; margin-bottom: 10px; }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: .92em;
+      color: var(--code);
+      background: #eef2f7;
+      border: 1px solid #dce3ec;
+      border-radius: 5px;
+      padding: 1px 5px;
+    }
+    @media (max-width: 840px) {
+      .hero, .section-head, .grid-two, .architecture { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: 1fr 1fr; }
+      .arrow { height: 24px; width: 1px; justify-self: center; }
+      .arrow:after { right: -4px; top: auto; bottom: -1px; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 7px solid var(--accent); border-bottom: 0; }
+      .sources { columns: 1; }
+    }
+    @media (max-width: 520px) {
+      .page { padding: 18px 16px 42px; }
+      .metrics { grid-template-columns: 1fr; }
+      .row { grid-template-columns: 1fr; gap: 6px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div>
+        <div class="eyebrow">GitHub Trending analysis · July 6, 2026 · Source: GitHub Trending</div>
+        <h1>MCP for Unity turns the game editor into an agent-addressable surface.</h1>
+        <p class="dek">CoplayDev/unity-mcp is notable because it treats Unity not as a file tree for an assistant to edit blindly, but as a live, routed, tool-described runtime with scene, asset, script, profiling, testing, and documentation affordances.</p>
+      </div>
+      <aside class="brief">
+        <strong>Selected repository</strong>
+        <a href="https://github.com/CoplayDev/unity-mcp">github.com/CoplayDev/unity-mcp</a><br>
+        Current Trending entry lists 11.8k+ stars, 1.2k+ forks, and 415 stars today. The repository itself reports 11.9k stars, 1.3k forks, 1,589 commits, MIT license, and v10.0.0 released on June 30, 2026.
+      </aside>
+    </header>
+
+    <div class="metrics" aria-label="Repository metrics">
+      <div class="metric"><b>47</b><span>MCP tools</span></div>
+      <div class="metric"><b>3</b><span>runtime layers</span></div>
+      <div class="metric"><b>2021.3 → 6.x</b><span>Unity range</span></div>
+      <div class="metric"><b>MIT</b><span>license</span></div>
+    </div>
+
+    <section class="section-head">
+      <h2>What It Does</h2>
+      <div>
+        <p class="lead">MCP for Unity bridges AI assistants such as Claude, Codex, VS Code, Cursor, and local LLMs to the Unity Editor via the Model Context Protocol.</p>
+        <div class="grid-two">
+          <div class="panel">
+            <h3>Developer-facing value</h3>
+            <p>It lets an assistant create and inspect scenes, manipulate GameObjects, edit C# scripts, manage assets, run tests, profile, build players, and query Unity documentation through explicit tools instead of guessing from project files alone.</p>
+          </div>
+          <div class="panel">
+            <h3>Product framing</h3>
+            <p>The product promise is not simply “AI writes code.” It is “the editor exposes a controllable workbench,” which fits game development better because so much work is visual, stateful, and bound to Unity’s editor APIs.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-head">
+      <h2>Why It Is Popular</h2>
+      <div class="stack">
+        <p class="lead">Unity projects are hard for general-purpose coding agents because meaningful work often requires editor state, asset imports, scene hierarchy, compiled C# diagnostics, and play-mode feedback. This project packages those operations into a discoverable tool surface.</p>
+        <div class="table">
+          <div class="row"><b>Timing</b><span>Agentic coding workflows are moving from text-only repositories into live applications. Game engines are an obvious next frontier because they combine code, assets, scenes, and runtime behavior.</span></div>
+          <div class="row"><b>Scope</b><span>The tool catalog is broad enough to feel useful immediately: core scene and script operations, UI Toolkit, VFX, ProBuilder, profiling, testing, asset generation, and Unity documentation lookup.</span></div>
+          <div class="row"><b>Distribution</b><span>Installation is shaped around the workflows users already have: Unity Package Manager, Python via uv, and auto-configuration for multiple MCP clients.</span></div>
+          <div class="row"><b>Credibility</b><span>The project is tied to a 2025 ACM technical communication paper and has a visible release cadence, including v10.0.0 on June 30, 2026.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-head">
+      <h2>Core Architecture</h2>
+      <div>
+        <div class="architecture">
+          <div class="node">
+            <div class="tag">Layer 01</div>
+            <h3>MCP client</h3>
+            <p>Claude, Codex, VS Code, Cursor, or a local LLM discovers tools and resources, then sends MCP calls through either HTTP or stdio.</p>
+          </div>
+          <div class="arrow" aria-hidden="true"></div>
+          <div class="node">
+            <div class="tag">Layer 02</div>
+            <h3>Python server</h3>
+            <p>FastMCP plus a WebSocket hub handles tool registration, routing, session state, and communication with Unity plugin connections.</p>
+          </div>
+          <div class="arrow" aria-hidden="true"></div>
+          <div class="node">
+            <div class="tag">Layer 03</div>
+            <h3>Unity Editor plugin</h3>
+            <p>A C# package receives commands inside the Unity process, executes editor APIs on the main thread, and returns structured responses.</p>
+          </div>
+        </div>
+        <p style="margin-top:18px">This split is the project’s key design choice: the assistant talks to a protocol server, the server owns MCP concerns, and Unity-specific execution remains inside the editor where the APIs and project state actually live.</p>
+      </div>
+    </section>
+
+    <section class="section-head">
+      <h2>Implementation Ideas Worth Studying</h2>
+      <div class="grid-two">
+        <div class="panel">
+          <h3>Tool registry as source of truth</h3>
+          <p>The docs state that the reference is generated from Python <code>@mcp_for_unity_tool</code> registrations. That reduces drift between docs and server behavior, and it makes the tool surface inspectable as a product artifact.</p>
+        </div>
+        <div class="panel">
+          <h3>Session-scoped tool visibility</h3>
+          <p>Only <code>core</code> is enabled by default. Groups like VFX, profiling, testing, and docs can be activated per session, saving prompt tokens and reducing wrong-tool selection.</p>
+        </div>
+        <div class="panel">
+          <h3>Multi-instance routing</h3>
+          <p>Connected editors advertise stable <code>Name@hash</code> identifiers. A session can set an active instance, or route individual calls to specific projects for comparisons and multi-editor work.</p>
+        </div>
+        <div class="panel">
+          <h3>Two transport modes</h3>
+          <p>HTTP supports shared multi-client workflows, remote hosting, and session isolation. Stdio optimizes local setup and compatibility with clients that spawn MCP servers directly.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-head">
+      <h2>Product And Design Insight</h2>
+      <div>
+        <p class="lead">The product succeeds by narrowing the assistant’s choices to operations Unity developers recognize: create a scene, add a Rigidbody, validate a script, read console output, import an asset, run tests.</p>
+        <div class="callout">
+          <p>The design lesson is that agent tooling becomes more useful when it exposes the native verbs of a domain. A generic file-editing assistant can write C#; a Unity-aware assistant can coordinate code, scene state, editor diagnostics, and package-specific capabilities in one loop.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-head">
+      <h2>Strengths, Risks, Limits</h2>
+      <div class="grid-two">
+        <div class="panel">
+          <h3>Strengths</h3>
+          <ul>
+            <li>Strong domain fit: the live Unity Editor becomes part of the agent feedback loop.</li>
+            <li>Good boundary design: MCP protocol handling, Python routing, and C# editor execution are separated.</li>
+            <li>Prompt-cost awareness: tool groups recognize that bigger tool surfaces can degrade model behavior.</li>
+            <li>Practical routing: multiple editors and multiple clients are first-class concerns.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Risks and limitations</h3>
+          <ul>
+            <li>Editor automation can mutate assets and scenes quickly; teams need review habits and version control discipline.</li>
+            <li>Remote server mode adds authentication, isolation, and network security complexity.</li>
+            <li>Unity’s API and package ecosystem are broad; tool coverage will always lag some specialized workflows.</li>
+            <li>LLMs can still choose the wrong operation, especially when optional tool groups overlap semantically.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-head">
+      <h2>What Developers Can Learn</h2>
+      <div class="table">
+        <div class="row"><b>Expose verbs</b><span>Agent integrations work better when they expose intentional domain operations instead of raw, unbounded execution.</span></div>
+        <div class="row"><b>Design for routing</b><span>If a tool can control real runtime state, instance identity and session state become product requirements, not implementation details.</span></div>
+        <div class="row"><b>Keep tools scoped</b><span>A smaller visible tool set can improve model reliability, lower token cost, and make user intent easier to map.</span></div>
+        <div class="row"><b>Generate references</b><span>When tools are the API, docs should be generated from the registry that powers the server.</span></div>
+      </div>
+    </section>
+
+    <section class="section-head">
+      <h2>Sources</h2>
+      <ol class="sources">
+        <li><a href="https://github.com/trending?since=daily">GitHub Trending repositories today</a></li>
+        <li><a href="https://github.com/CoplayDev/unity-mcp">CoplayDev/unity-mcp repository and README</a></li>
+        <li><a href="https://coplaydev.github.io/unity-mcp/">MCP for Unity official documentation home</a></li>
+        <li><a href="https://coplaydev.github.io/unity-mcp/reference/tools">Tool reference</a></li>
+        <li><a href="https://coplaydev.github.io/unity-mcp/guides/multi-instance">Multi-Instance Routing guide</a></li>
+        <li><a href="https://coplaydev.github.io/unity-mcp/guides/tool-groups">Tool Groups guide</a></li>
+        <li><a href="https://coplaydev.github.io/unity-mcp/architecture/transports">Transport Modes architecture page</a></li>
+        <li><a href="https://coplaydev.github.io/unity-mcp/guides/remote-server-auth">Remote Server API Key Authentication guide</a></li>
+      </ol>
+    </section>
+  </main>
+</body>
+</html>

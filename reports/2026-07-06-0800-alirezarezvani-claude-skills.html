@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Engineering Analysis: alirezarezvani/claude-skills</title>
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --paper: #fffdf8;
+      --ink: #242321;
+      --muted: #6c6760;
+      --line: #d8d0c4;
+      --accent: #b6492f;
+      --accent-dark: #7e2f20;
+      --soft: #ebe4d8;
+      --code: #302e2a;
+      --radius: 8px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+      letter-spacing: 0;
+    }
+
+    a { color: var(--accent-dark); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
+    .page {
+      min-height: 100vh;
+      background:
+        linear-gradient(90deg, rgba(36,35,33,.06) 1px, transparent 1px) 0 0 / 76px 76px,
+        linear-gradient(180deg, rgba(36,35,33,.04) 1px, transparent 1px) 0 0 / 76px 76px,
+        var(--bg);
+    }
+
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+
+    header {
+      border-bottom: 1px solid var(--line);
+      background: rgba(244, 241, 234, .92);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 18px 0;
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(300px, .65fr);
+      gap: 48px;
+      padding: 62px 0 54px;
+      align-items: end;
+    }
+
+    .kicker {
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 850px;
+      font-size: clamp(46px, 7.2vw, 92px);
+      line-height: .94;
+      letter-spacing: 0;
+      font-weight: 850;
+    }
+
+    .subtitle {
+      max-width: 720px;
+      margin: 26px 0 0;
+      font-size: clamp(18px, 2vw, 24px);
+      color: #45413c;
+      line-height: 1.35;
+    }
+
+    .hero-panel {
+      border-left: 3px solid var(--accent);
+      padding: 6px 0 6px 24px;
+    }
+
+    .hero-panel p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .score {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric {
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    main { padding: 38px 0 72px; }
+
+    section {
+      padding: 42px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 52px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--accent);
+    }
+
+    h3 {
+      margin: 0 0 12px;
+      font-size: 24px;
+      line-height: 1.18;
+    }
+
+    p { margin: 0 0 16px; }
+
+    .lead {
+      font-size: 25px;
+      line-height: 1.28;
+      margin-bottom: 22px;
+    }
+
+    .muted { color: var(--muted); }
+
+    .split {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px;
+    }
+
+    .note, .compact-card {
+      background: rgba(255,253,248,.72);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .note {
+      font-size: 15px;
+      color: #433f3a;
+    }
+
+    .architecture {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-top: 20px;
+    }
+
+    .arch-cell {
+      background: var(--paper);
+      min-height: 190px;
+      padding: 22px;
+    }
+
+    .arch-cell b {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 15px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .arch-cell p { color: var(--muted); font-size: 15px; }
+
+    .flow {
+      margin: 24px 0 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: flow;
+      border-top: 1px solid var(--line);
+    }
+
+    .flow li {
+      counter-increment: flow;
+      display: grid;
+      grid-template-columns: 62px minmax(0, 1fr);
+      gap: 22px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .flow li::before {
+      content: counter(flow, decimal-leading-zero);
+      color: var(--accent);
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: .08em;
+    }
+
+    .flow strong { display: block; margin-bottom: 4px; }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--line);
+      gap: 1px;
+      margin-top: 8px;
+    }
+
+    .matrix div {
+      background: var(--paper);
+      padding: 20px;
+      min-height: 160px;
+    }
+
+    .matrix b {
+      display: block;
+      color: var(--accent-dark);
+      margin-bottom: 8px;
+    }
+
+    .tagline {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color: var(--code);
+      background: var(--soft);
+      border-left: 3px solid var(--accent);
+      padding: 18px 20px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin: 22px 0;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    ul.clean {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      border-top: 1px solid var(--line);
+    }
+
+    ul.clean li {
+      padding: 15px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .sources {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px 28px;
+      font-size: 14px;
+    }
+
+    .sources a {
+      display: block;
+      overflow-wrap: anywhere;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 24px 0 36px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 860px) {
+      .hero, .section-grid, .split, .architecture, .matrix, .sources {
+        grid-template-columns: 1fr;
+      }
+      .hero { gap: 30px; padding-top: 42px; }
+      .hero-panel { border-left: 0; border-top: 3px solid var(--accent); padding: 20px 0 0; }
+      .section-grid { gap: 22px; }
+      .topbar { flex-direction: column; gap: 6px; }
+      .wrap { padding: 0 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="wrap">
+        <div class="topbar">
+          <div>GitHub Trending Engineering Report</div>
+          <div>Generated 2026-07-06 08:00 CST</div>
+        </div>
+        <div class="hero">
+          <div>
+            <div class="kicker">Selected repository</div>
+            <h1>claude-skills turns prompt libraries into a portable agent toolchain.</h1>
+            <p class="subtitle">The interesting part is not only the volume of skills. It is the repo’s attempt to package domain expertise as installable, testable, cross-agent infrastructure.</p>
+          </div>
+          <aside class="hero-panel">
+            <p><strong>Repository:</strong><br><a href="https://github.com/alirezarezvani/claude-skills">alirezarezvani/claude-skills</a></p>
+            <p><strong>Source:</strong> GitHub Trending daily. The repository appeared with 394 stars today on the Trending page snapshot used for this report.</p>
+            <div class="score">
+              <div class="metric"><strong>20.5k</strong><span>stars shown</span></div>
+              <div class="metric"><strong>2.8k</strong><span>forks shown</span></div>
+              <div class="metric"><strong>354</strong><span>skills claimed</span></div>
+              <div class="metric"><strong>13</strong><span>agent targets</span></div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section>
+        <div class="section-grid">
+          <h2>Thesis</h2>
+          <div>
+            <p class="lead">This project is a distribution layer for agent behavior: a catalog of skills, personas, commands, scripts, references, and generated plugin bundles intended to make AI coding agents more specialized across tools.</p>
+            <p>The repository positions “skills” as reusable domain modules. A skill is not just a prompt; the documented unit includes a <code>SKILL.md</code> instruction file, optional Python scripts, reference material, assets, commands, agents, and evals. The repo then publishes or converts those units for Claude Code, OpenAI Codex, Gemini CLI, Cursor, Aider, Windsurf, OpenCode, Augment, Hermes Agent, Mistral Vibe, and related tools.</p>
+            <div class="tagline">Product reading: the repo treats agent behavior like content operations plus package management. Its core bet is that portable expertise libraries become more valuable as developers use several agent runtimes at once.</div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-grid">
+          <h2>Why It Trended</h2>
+          <div class="split">
+            <div>
+              <h3>It rides a real workflow shift.</h3>
+              <p>Developers are no longer asking only for better base models. They are trying to make agents repeat organizational conventions, product judgment, security review habits, testing workflows, and domain-specific output standards. A large, installable skill catalog maps directly onto that demand.</p>
+            </div>
+            <div>
+              <h3>It offers immediate surface area.</h3>
+              <p>The README advertises hundreds of skills, dozens of agents, slash commands, stdlib-only tools, and many target environments. That breadth gives the project a strong discovery hook on Trending, even before a user has evaluated quality skill by skill.</p>
+            </div>
+          </div>
+          <div class="note" style="margin-top: 22px;">
+            The popularity signal should be read with nuance: the GitHub API snapshot used here showed roughly 20,541 stars and 2,793 forks, while the README badge text still mentioned an older 5,200+ star milestone. That mismatch is common in fast-moving repositories and is itself evidence of recent acceleration.
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-grid">
+          <h2>Architecture</h2>
+          <div>
+            <p>The architecture is repository-as-registry. Instead of one runtime service, it has a catalog core, per-tool adapters, installer scripts, validation scripts, and generated plugin metadata.</p>
+            <div class="architecture">
+              <div class="arch-cell">
+                <b>Catalog core</b>
+                <p>Top-level domain folders and generated trees hold skills, agents, personas, commands, references, templates, and indexes. The project’s recursive tree contains thousands of paths, including dedicated <code>.codex</code>, <code>.claude</code>, <code>.gemini</code>, <code>.hermes</code>, and <code>.vibe</code> outputs.</p>
+              </div>
+              <div class="arch-cell">
+                <b>Packaging layer</b>
+                <p><code>.claude-plugin</code> and <code>.codex-plugin</code> metadata make the catalog installable. Domain plugin bundles allow users to install a coherent set, while individual skills remain addressable.</p>
+              </div>
+              <div class="arch-cell">
+                <b>Conversion layer</b>
+                <p>Scripts such as <code>convert.sh</code>, <code>install.sh</code>, <code>codex-install.sh</code>, <code>gemini-install.sh</code>, and sync scripts translate the same knowledge base into different agent conventions.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-grid">
+          <h2>Implementation Ideas</h2>
+          <div>
+            <ul class="flow">
+              <li>
+                <div><strong>Normalize the skill unit.</strong><span class="muted">The authoring standard defines a repeatable <code>SKILL.md</code> shape with frontmatter, trigger descriptions, context-first behavior, modes, proactive triggers, output artifacts, communication rules, and related-skill navigation.</span></div>
+              </li>
+              <li>
+                <div><strong>Keep workflows lean, move depth to references.</strong><span class="muted">The standard pushes the main instruction file to act as workflow and decision guide, while larger knowledge bases live in reference files that can be loaded only when relevant.</span></div>
+              </li>
+              <li>
+                <div><strong>Prefer portable scripts.</strong><span class="muted">The README emphasizes hundreds of Python CLI scripts with standard-library-only constraints. That choice lowers install friction across local agent environments.</span></div>
+              </li>
+              <li>
+                <div><strong>Convert at the edge.</strong><span class="muted">The repo does not assume every coding tool will adopt one skill format. It generates or syncs into native-ish folders for each target platform.</span></div>
+              </li>
+              <li>
+                <div><strong>Add a production pipeline.</strong><span class="muted">The pipeline document lays out intent, research, draft, eval, iteration, compliance, packaging, deployment, verification, and rollback readiness, which is a mature frame for something that could otherwise degrade into prompt sprawl.</span></div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-grid">
+          <h2>Product Insight</h2>
+          <div class="matrix">
+            <div>
+              <b>Strong product instinct</b>
+              <p>The repo names the user’s actual problem: they use multiple agent tools and want consistent behavior across them. Multi-tool packaging is therefore not an afterthought; it is the product.</p>
+            </div>
+            <div>
+              <b>Discovery is doing too much work</b>
+              <p>The catalog is broad enough that users may struggle to identify the trusted path. The next product step would be stronger curation: recommended bundles by job-to-be-done, confidence labels, maintenance status, and quality scores.</p>
+            </div>
+            <div>
+              <b>Great distribution shape</b>
+              <p>GitHub is a good primitive here because the content is auditable, forkable, and installable. That matters for organizations that do not want opaque prompt marketplaces.</p>
+            </div>
+            <div>
+              <b>Trust is the central product risk</b>
+              <p>Skills can influence tools, commands, security decisions, compliance advice, and code review. The more powerful the catalog becomes, the more provenance, review, sandboxing, and update discipline matter.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-grid">
+          <h2>Strengths</h2>
+          <div>
+            <ul class="clean">
+              <li><strong>Portable abstraction:</strong> the same skill concept is mapped onto many agent runtimes instead of being locked to one vendor.</li>
+              <li><strong>Operational maturity:</strong> the pipeline document introduces evals, compliance review, packaging, deployment, and rollback readiness.</li>
+              <li><strong>Low runtime dependency surface:</strong> stdlib-only Python tools make many skills easier to install in constrained developer environments.</li>
+              <li><strong>Domain breadth:</strong> engineering, product, marketing, compliance, research, finance, operations, and executive personas create a broad workflow graph.</li>
+              <li><strong>Explicit authoring conventions:</strong> context-first behavior, output artifacts, related-skill navigation, and mode-based workflows give contributors a common language.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-grid">
+          <h2>Risks</h2>
+          <div>
+            <ul class="clean">
+              <li><strong>Quality variance:</strong> a large catalog can contain uneven skill depth, stale references, or impressive-sounding coverage that is hard to verify quickly.</li>
+              <li><strong>Prompt supply-chain exposure:</strong> installable instructions and scripts should be treated as executable influence, especially when they touch security review, compliance, finance, or command execution.</li>
+              <li><strong>Format drift:</strong> supporting many agent platforms means each target can change its conventions, causing generated adapters or install flows to age differently.</li>
+              <li><strong>Signal overload:</strong> users may need a smaller opinionated path before they can benefit from the full marketplace-size catalog.</li>
+              <li><strong>Metric ambiguity:</strong> README claims and live repository metrics can diverge during rapid growth; automated counters need to stay synchronized to maintain credibility.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-grid">
+          <h2>Lessons</h2>
+          <div class="split">
+            <div class="compact-card">
+              <h3>For tool builders</h3>
+              <p>Make customization portable. Users increasingly combine multiple agents, editors, CLIs, and MCP-like services. A useful extension layer should travel with the team’s conventions, not only with one product.</p>
+            </div>
+            <div class="compact-card">
+              <h3>For engineering teams</h3>
+              <p>Treat agent instructions as governed artifacts. Version them, review them, test them against baseline behavior, and separate workflow instructions from heavier reference material.</p>
+            </div>
+            <div class="compact-card">
+              <h3>For open-source maintainers</h3>
+              <p>Catalog projects need more than quantity. The defensible layer is metadata: trigger clarity, eval coverage, examples, dependency policy, maintenance status, and trust signals.</p>
+            </div>
+            <div class="compact-card">
+              <h3>For developers using it</h3>
+              <p>Start with a small bundle and inspect the files before installing broadly. The repo is valuable precisely because it is visible source, so take advantage of that visibility.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-grid">
+          <h2>Sources</h2>
+          <div>
+            <p class="muted">Primary sources used for repository selection and analysis.</p>
+            <div class="sources">
+              <a href="https://github.com/trending?since=daily">GitHub Trending daily page</a>
+              <a href="https://github.com/alirezarezvani/claude-skills">Repository home: alirezarezvani/claude-skills</a>
+              <a href="https://api.github.com/repos/alirezarezvani/claude-skills">GitHub repository API metadata</a>
+              <a href="https://api.github.com/repos/alirezarezvani/claude-skills/languages">GitHub repository language breakdown API</a>
+              <a href="https://github.com/alirezarezvani/claude-skills/blob/main/SKILL_PIPELINE.md">SKILL_PIPELINE.md</a>
+              <a href="https://github.com/alirezarezvani/claude-skills/blob/main/SKILL-AUTHORING-STANDARD.md">SKILL-AUTHORING-STANDARD.md</a>
+              <a href="https://github.com/alirezarezvani/claude-skills/tree/main/scripts">Repository scripts directory</a>
+              <a href="https://api.github.com/repos/alirezarezvani/claude-skills/git/trees/main?recursive=1">Recursive repository tree API</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        Standalone local report. No external CSS, JavaScript, fonts, or build step required.
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

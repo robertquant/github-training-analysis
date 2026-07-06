@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>openai/codex-plugin-cc - Trending Project Analysis</title>
+  <style>
+    :root {
+      --ink: #17201b;
+      --muted: #5e6b64;
+      --paper: #f6f7f3;
+      --panel: #ffffff;
+      --line: #d9dfd6;
+      --accent: #1f7a52;
+      --accent-dark: #14543a;
+      --soft: #e8efe8;
+      --code: #26332d;
+      --shadow: rgba(33, 55, 43, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.55;
+    }
+
+    a { color: var(--accent-dark); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
+    .page {
+      width: min(1180px, calc(100% - 36px));
+      margin: 0 auto;
+    }
+
+    .hero {
+      min-height: 74vh;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) 360px;
+      gap: 56px;
+      align-items: end;
+      padding: 72px 0 42px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 18px;
+      font-size: 12px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--accent-dark);
+      font-weight: 760;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 780px;
+      font-size: clamp(44px, 8vw, 96px);
+      line-height: .94;
+      letter-spacing: 0;
+      font-weight: 820;
+    }
+
+    .subtitle {
+      max-width: 680px;
+      margin: 28px 0 0;
+      color: var(--muted);
+      font-size: clamp(18px, 2.1vw, 23px);
+    }
+
+    .hero-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 50px var(--shadow);
+      padding: 22px;
+    }
+
+    .hero-card h2 {
+      margin: 0 0 18px;
+      font-size: 14px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .metric {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      padding: 13px 0;
+      border-top: 1px solid var(--line);
+      font-size: 14px;
+    }
+
+    .metric:first-of-type { border-top: 0; }
+    .metric b { color: var(--ink); }
+    .metric span:last-child { color: var(--accent-dark); font-weight: 780; text-align: right; }
+
+    section {
+      padding: 54px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 44px;
+      align-items: start;
+      margin-bottom: 28px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      margin: 0;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .lede-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .plain-panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 22px;
+    }
+
+    .plain-panel h3,
+    .lane h3,
+    .learning h3 {
+      margin: 0 0 10px;
+      font-size: 17px;
+      line-height: 1.2;
+    }
+
+    .plain-panel p,
+    .lane p,
+    .learning p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .map {
+      display: grid;
+      grid-template-columns: 1fr 36px 1fr 36px 1fr;
+      gap: 14px;
+      align-items: stretch;
+      margin-top: 10px;
+    }
+
+    .node {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 20px;
+      min-height: 160px;
+    }
+
+    .node strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 15px;
+    }
+
+    .node p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .arrow {
+      align-self: center;
+      color: var(--accent-dark);
+      font-weight: 900;
+      text-align: center;
+      font-size: 24px;
+    }
+
+    .architecture {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .lane {
+      padding: 22px;
+      border-top: 3px solid var(--accent);
+      background: var(--panel);
+      border-radius: 8px;
+      box-shadow: 0 10px 34px var(--shadow);
+    }
+
+    .tagline {
+      display: inline-block;
+      margin-bottom: 14px;
+      padding: 4px 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--accent-dark);
+      background: var(--soft);
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
+      gap: 36px;
+      align-items: start;
+    }
+
+    .callout {
+      border-left: 4px solid var(--accent);
+      padding: 6px 0 6px 20px;
+      font-size: 22px;
+      line-height: 1.35;
+      font-weight: 720;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    li { margin: 10px 0; color: var(--muted); }
+    li strong { color: var(--ink); }
+
+    .learning-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .learning {
+      padding: 20px 0 0;
+      border-top: 1px solid var(--accent);
+    }
+
+    code {
+      color: var(--code);
+      background: #e2e9e2;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      padding: 1px 5px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: .92em;
+    }
+
+    .source-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .source {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      font-size: 14px;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 28px 0 48px;
+    }
+
+    @media (max-width: 860px) {
+      .hero,
+      .section-head,
+      .split,
+      .lede-grid,
+      .architecture,
+      .learning-grid,
+      .source-list {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        gap: 28px;
+        min-height: auto;
+        padding-top: 44px;
+      }
+
+      .map {
+        grid-template-columns: 1fr;
+      }
+
+      .arrow {
+        transform: rotate(90deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">GitHub Trending analysis · July 6, 2026 · GitHub Trending source</p>
+        <h1>Codex as a collaborator inside another agent’s workspace</h1>
+        <p class="subtitle">OpenAI’s <strong>codex-plugin-cc</strong> is popular because it turns Codex from a separate CLI into a second opinion, delegation lane, review gate, and session handoff path inside Claude Code.</p>
+      </div>
+      <aside class="hero-card" aria-label="Repository snapshot">
+        <h2>Repository Snapshot</h2>
+        <div class="metric"><b>Project</b><span>openai/codex-plugin-cc</span></div>
+        <div class="metric"><b>Purpose</b><span>Claude Code plugin</span></div>
+        <div class="metric"><b>Language</b><span>JavaScript</span></div>
+        <div class="metric"><b>Trending signal</b><span>1,519 stars today</span></div>
+        <div class="metric"><b>Repository scale</b><span>25.2k stars · 1.5k forks</span></div>
+        <div class="metric"><b>License / release</b><span>Apache-2.0 · v1.0.5</span></div>
+      </aside>
+    </header>
+
+    <section>
+      <div class="section-head">
+        <h2>Why This Became Interesting</h2>
+        <p>Most coding-agent projects compete for the whole terminal. This one takes the opposite product bet: meet developers where they already are, then make the boundary between two agent runtimes feel operational rather than philosophical.</p>
+      </div>
+      <div class="lede-grid">
+        <article class="plain-panel">
+          <h3>It addresses workflow switching</h3>
+          <p>The README frames the plugin for Claude Code users who want to start using Codex without leaving their existing workflow. That positioning is unusually pragmatic for an AI tool: the plugin does not ask users to replace their editor, terminal habit, or conversation history.</p>
+        </article>
+        <article class="plain-panel">
+          <h3>It packages Codex as commands, not as a monolith</h3>
+          <p>The surface area is a compact command set: review, adversarial review, rescue, transfer, status, result, cancel, and setup. Each command is a small product promise with clear operating semantics.</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>What It Does</h2>
+        <p>The plugin gives Claude Code users a local bridge to Codex. It can run read-only reviews, launch long-running Codex tasks, resume recent work, cancel active jobs, show stored results, and import a Claude session into a persistent Codex thread.</p>
+      </div>
+      <div class="map">
+        <div class="node">
+          <strong>Claude Code command</strong>
+          <p>Slash commands and hooks form the user-facing plugin surface. A user asks for a review, rescue task, transfer, status check, setup check, or cancellation.</p>
+        </div>
+        <div class="arrow">→</div>
+        <div class="node">
+          <strong>Companion runtime</strong>
+          <p><code>codex-companion.mjs</code> parses flags, chooses workspace context, reads prompts, coordinates state, and decides whether a command is synchronous or backgrounded.</p>
+        </div>
+        <div class="arrow">→</div>
+        <div class="node">
+          <strong>Codex app server</strong>
+          <p>The bridge uses the local <code>codex</code> binary and Codex app-server protocol, inheriting the user’s existing Codex login, model, base URL, and configuration.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>Core Architecture</h2>
+        <p>The codebase is a Node ESM package with plugin metadata, command markdown files, hooks, prompts, schemas, a brokered app-server client layer, and tests. Its design center is orchestration, not model logic.</p>
+      </div>
+      <div class="architecture">
+        <article class="lane">
+          <span class="tagline">Command layer</span>
+          <h3>Small commands with explicit behavior</h3>
+          <p>Markdown command files expose Claude Code entry points while <code>codex-companion.mjs</code> implements the shared CLI. The same runtime handles setup, review, adversarial review, task delegation, transfer, status, result, and cancel.</p>
+        </article>
+        <article class="lane">
+          <span class="tagline">Review targeting</span>
+          <h3>Git context is resolved before Codex runs</h3>
+          <p><code>git.mjs</code> detects working-tree changes, branch comparisons, default branches, untracked text files, and inline diff limits. This turns a vague “review this” request into a bounded, auditable review target.</p>
+        </article>
+        <article class="lane">
+          <span class="tagline">Background jobs</span>
+          <h3>Long work becomes inspectable state</h3>
+          <p><code>state.mjs</code>, <code>tracked-jobs.mjs</code>, and <code>job-control.mjs</code> persist jobs, progress previews, log files, status phases, durations, final output, and resumable Codex thread IDs.</p>
+        </article>
+        <article class="lane">
+          <span class="tagline">Session bridge</span>
+          <h3>Claude conversations can move into Codex</h3>
+          <p><code>claude-session-transfer.mjs</code> only accepts JSONL transcripts under the Claude projects directory, then uses Codex external-agent import support to create a persistent Codex thread.</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="split">
+        <div>
+          <h2>Key Implementation Ideas</h2>
+          <p class="callout">The plugin’s engineering value is in making agent work observable, cancelable, resumable, and reviewable without forcing a new top-level workflow.</p>
+        </div>
+        <ul>
+          <li><strong>Read-only by default for reviews.</strong> Review commands are described as non-mutating, which is the right safety default when an agent is judging code rather than fixing it.</li>
+          <li><strong>Structured output for review quality.</strong> The repository includes a review-output schema and renderer logic that validates verdict, summary, findings, severities, file locations, and next steps.</li>
+          <li><strong>Phase inference for progress UX.</strong> Job status code infers phases such as starting, reviewing, investigating, editing, verifying, finalizing, failed, or done from Codex events and log lines.</li>
+          <li><strong>Conservative transcript import.</strong> Transfer only works from a real Claude project JSONL path, reducing the chance that arbitrary local files are silently imported as agent history.</li>
+          <li><strong>Compatibility through local configuration.</strong> Because the plugin uses the local Codex CLI, existing authentication, model defaults, and provider configuration still apply.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>Product and Design Insight</h2>
+        <p>The strongest product choice is treating cross-agent work as a control surface: one command starts the work, another shows status, another retrieves results, and a session ID lets users continue later. That is closer to job control than chat UI.</p>
+      </div>
+      <div class="lede-grid">
+        <article class="plain-panel">
+          <h3>It separates “review” from “challenge”</h3>
+          <p><code>/codex:review</code> is the normal reviewer. <code>/codex:adversarial-review</code> is a steerable challenge mode for design assumptions and risk areas. That distinction gives developers a useful vocabulary for asking different kinds of questions.</p>
+        </article>
+        <article class="plain-panel">
+          <h3>It makes asynchronous AI feel familiar</h3>
+          <p>Status, result, cancel, background mode, durations, progress previews, and resume commands mirror the operational patterns developers already use for long-running jobs.</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="split">
+        <div>
+          <h2>Strengths, Risks, Limitations</h2>
+        </div>
+        <div>
+          <ul>
+            <li><strong>Strength:</strong> Narrow scope. The plugin does not invent a new IDE. It adds a bridge and keeps the mental model close to terminal commands.</li>
+            <li><strong>Strength:</strong> Safety posture. Review is read-only, task execution can be separated into background jobs, and the optional review gate is explicitly warned as potentially long-running.</li>
+            <li><strong>Strength:</strong> Real integration depth. Hooks, subagent packaging, state files, session import, app-server protocol handling, and structured rendering go beyond a shell wrapper.</li>
+            <li><strong>Risk:</strong> It depends on two fast-moving agent ecosystems: Claude Code plugin behavior and Codex app-server/runtime behavior. Breakage risk is higher than for a standalone CLI.</li>
+            <li><strong>Risk:</strong> Background agents can create cost and attention leaks. The review gate warning is important because automatic loops can consume usage quickly.</li>
+            <li><strong>Limitation:</strong> The main product value appears only if the user already works in Claude Code and has Codex available locally. Outside that overlap, the repository is less broadly useful.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>What Developers Can Learn</h2>
+        <p>This is a useful case study in integrating AI systems into existing developer habits without hiding operational complexity.</p>
+      </div>
+      <div class="learning-grid">
+        <article class="learning">
+          <h3>Design agent features as jobs</h3>
+          <p>Expose status, cancellation, logs, result retrieval, and resume IDs. Long-running AI work becomes much easier to trust when it has job semantics.</p>
+        </article>
+        <article class="learning">
+          <h3>Make safety modes explicit</h3>
+          <p>Separate review, adversarial review, and write-capable rescue tasks. Users should know whether a command observes, critiques, or mutates.</p>
+        </article>
+        <article class="learning">
+          <h3>Preserve existing configuration</h3>
+          <p>Borrow the user’s installed CLI, auth state, and project config where possible. Integrations feel lighter when they do not introduce a second configuration universe.</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>Sources</h2>
+        <p>Primary sources used for the analysis. GitHub Trending was available, so no fallback source was used.</p>
+      </div>
+      <div class="source-list">
+        <div class="source"><a href="https://github.com/trending?since=daily">GitHub Trending daily repositories</a> · ranking, stars today, language, and repository summary.</div>
+        <div class="source"><a href="https://github.com/openai/codex-plugin-cc">openai/codex-plugin-cc repository</a> · description, stars, forks, license, language, and latest release.</div>
+        <div class="source"><a href="https://github.com/openai/codex-plugin-cc/blob/main/README.md">Project README</a> · commands, installation flow, review gate behavior, and Codex integration notes.</div>
+        <div class="source"><a href="https://github.com/openai/codex-plugin-cc/tree/main/plugins/codex/scripts/lib">Source tree: scripts/lib</a> · implementation modules for app-server, git, jobs, rendering, state, and workspace handling.</div>
+      </div>
+    </section>
+
+    <div class="footer-note">
+      Generated locally for the cc-connect scheduled analysis task. Canonical repository URL: https://github.com/openai/codex-plugin-cc.
+    </div>
+  </main>
+</body>
+</html>

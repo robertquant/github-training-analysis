@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ChromeDevTools/chrome-devtools-mcp | Trending Engineering Analysis</title>
+  <style>
+    :root {
+      --paper: #f7f8f4;
+      --ink: #161816;
+      --muted: #606862;
+      --line: #d9ded6;
+      --soft: #eef1ea;
+      --accent: #1d6fd6;
+      --accent-dark: #124b95;
+      --chrome: #e7f0ff;
+      --shadow: 0 22px 60px rgba(46, 54, 47, .13);
+      --radius: 10px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+    a { color: var(--accent-dark); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    .shell { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+    .hero {
+      min-height: 84dvh;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(290px, .8fr);
+      gap: 42px;
+      align-items: end;
+      padding: 56px 0 42px;
+      border-bottom: 1px solid var(--line);
+    }
+    .eyebrow {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      color: var(--accent-dark);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+    .mark {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 18px 0 0 #d22f27, 36px 0 0 #f2c230, 54px 0 0 #28a454;
+      margin-right: 52px;
+    }
+    h1 {
+      max-width: 900px;
+      margin: 24px 0 20px;
+      font-size: clamp(48px, 8vw, 112px);
+      line-height: .9;
+      letter-spacing: 0;
+    }
+    .deck {
+      max-width: 720px;
+      font-size: clamp(18px, 2vw, 24px);
+      color: #303631;
+      margin: 0;
+    }
+    .hero-panel {
+      align-self: stretch;
+      display: grid;
+      align-content: end;
+      gap: 16px;
+      border-left: 1px solid var(--line);
+      padding-left: 28px;
+    }
+    .metric {
+      border-top: 1px solid var(--line);
+      padding-top: 16px;
+    }
+    .metric strong {
+      display: block;
+      font-size: clamp(30px, 4vw, 54px);
+      line-height: 1;
+    }
+    .metric span {
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-weight: 700;
+    }
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: rgba(247, 248, 244, .92);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+    }
+    .nav .shell {
+      display: flex;
+      gap: 18px;
+      overflow-x: auto;
+      padding-top: 13px;
+      padding-bottom: 13px;
+      white-space: nowrap;
+      font-size: 13px;
+      font-weight: 750;
+    }
+    section { padding: 64px 0; border-bottom: 1px solid var(--line); }
+    .section-head {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 36px;
+      margin-bottom: 34px;
+    }
+    .kicker {
+      color: var(--accent-dark);
+      font-size: 12px;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: .13em;
+    }
+    h2 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 58px);
+      line-height: .98;
+      letter-spacing: 0;
+    }
+    h3 { margin: 0 0 10px; font-size: 20px; line-height: 1.15; }
+    p { color: #343a35; margin: 0 0 16px; }
+    .lead { font-size: 20px; color: #222823; max-width: 850px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: 0 1px 0 rgba(0,0,0,.02);
+    }
+    .callout {
+      background: var(--chrome);
+      border: 1px solid #bdd5f4;
+      border-radius: var(--radius);
+      padding: 26px;
+      box-shadow: var(--shadow);
+    }
+    .architecture {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 28px;
+      align-items: start;
+    }
+    .flow {
+      display: grid;
+      gap: 10px;
+      counter-reset: flow;
+    }
+    .flow div {
+      position: relative;
+      padding: 16px 18px 16px 54px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+    .flow div::before {
+      counter-increment: flow;
+      content: counter(flow);
+      position: absolute;
+      left: 16px;
+      top: 15px;
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      font-size: 12px;
+      font-weight: 850;
+    }
+    .tool-matrix {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #fff;
+    }
+    .tool-matrix div {
+      min-height: 112px;
+      padding: 18px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .tool-matrix div:nth-child(4n) { border-right: 0; }
+    .tool-matrix b { display: block; margin-bottom: 8px; }
+    .tool-matrix span { color: var(--muted); font-size: 14px; }
+    .split-note {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #fff;
+    }
+    .split-note > div { padding: 26px; }
+    .split-note > div + div { border-left: 1px solid var(--line); background: var(--soft); }
+    ul { margin: 0; padding-left: 18px; color: #343a35; }
+    li { margin: 8px 0; }
+    code {
+      background: #edf2e9;
+      border: 1px solid #d7ded2;
+      border-radius: 6px;
+      padding: 2px 6px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: .92em;
+    }
+    .source-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px 24px;
+      font-size: 14px;
+    }
+    footer { padding: 34px 0 56px; color: var(--muted); font-size: 13px; }
+
+    @media (max-width: 860px) {
+      .shell { padding: 0 18px; }
+      .hero, .section-head, .architecture, .grid-2, .grid-3, .split-note, .source-list {
+        grid-template-columns: 1fr;
+      }
+      .hero { min-height: auto; padding-top: 38px; }
+      .hero-panel { border-left: 0; border-top: 1px solid var(--line); padding-left: 0; padding-top: 22px; }
+      .tool-matrix { grid-template-columns: 1fr 1fr; }
+      .tool-matrix div:nth-child(2n) { border-right: 0; }
+      .split-note > div + div { border-left: 0; border-top: 1px solid var(--line); }
+    }
+    @media (max-width: 520px) {
+      h1 { font-size: 46px; }
+      section { padding: 46px 0; }
+      .tool-matrix { grid-template-columns: 1fr; }
+      .tool-matrix div { border-right: 0; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="shell hero">
+      <div>
+        <div class="eyebrow"><span class="mark"></span> GitHub Trending analysis · 2026-07-06 04:00 CST</div>
+        <h1>Chrome DevTools, rebuilt as an agent interface.</h1>
+        <p class="deck">ChromeDevTools/chrome-devtools-mcp turns the browser's inspection, automation, performance, memory, network, and page-state surfaces into MCP tools that coding agents can call directly.</p>
+      </div>
+      <aside class="hero-panel" aria-label="Repository facts">
+        <div class="metric"><strong>45,945</strong><span>GitHub stars at analysis time</span></div>
+        <div class="metric"><strong>2,990</strong><span>Forks</span></div>
+        <div class="metric"><strong>TypeScript</strong><span>Primary language · Apache-2.0</span></div>
+      </aside>
+    </header>
+
+    <nav class="nav">
+      <div class="shell">
+        <a href="#why">Why it matters</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#implementation">Implementation ideas</a>
+        <a href="#product">Product insight</a>
+        <a href="#risks">Risks</a>
+        <a href="#lessons">Lessons</a>
+        <a href="#sources">Sources</a>
+      </div>
+    </nav>
+
+    <section id="why">
+      <div class="shell">
+        <div class="section-head">
+          <div class="kicker">Selection rationale</div>
+          <h2>A timely bridge between browser reality and code-agent reasoning.</h2>
+        </div>
+        <div class="grid-2">
+          <div>
+            <p class="lead">The project is notable because it moves coding agents out of static source analysis and into a live browser feedback loop. Instead of asking an agent to infer UI behavior from code alone, it can inspect pages, click elements, capture screenshots, run Lighthouse, read console output, inspect network traffic, and investigate memory or performance traces.</p>
+            <p>That is why it is a strong trending pick: MCP has become a common integration layer for agent tools, Chrome DevTools is the canonical browser debugging surface, and frontend debugging is one of the areas where agents need reliable runtime evidence rather than plausible guesses.</p>
+          </div>
+          <div class="callout">
+            <h3>What it does in one sentence</h3>
+            <p>It exposes Chrome DevTools capabilities as a local MCP server, with an optional CLI and daemon path, so agents and developers can operate the browser through deterministic tools instead of unstructured screen scraping.</p>
+            <p><strong>Canonical URL:</strong><br><a href="https://github.com/ChromeDevTools/chrome-devtools-mcp">https://github.com/ChromeDevTools/chrome-devtools-mcp</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="architecture">
+      <div class="shell">
+        <div class="section-head">
+          <div class="kicker">Core architecture</div>
+          <h2>A thin server wrapped around Chrome, Puppeteer, and a typed tool registry.</h2>
+        </div>
+        <div class="architecture">
+          <div>
+            <p>The server starts from <code>createMcpServer</code>, initializes telemetry only when enabled, registers an MCP server named <code>chrome_devtools</code>, negotiates client capabilities such as roots, and lazily creates a browser-backed <code>McpContext</code>.</p>
+            <p>The browser layer can connect to an existing Chrome instance through a browser URL or WebSocket endpoint, auto-connect to a channel, or launch a new isolated/headless browser. That makes the same tool surface useful for CI-like automation, local debugging, and agent-driven exploratory work.</p>
+          </div>
+          <div class="flow">
+            <div><strong>MCP client calls a tool.</strong><br>Agent sends a structured MCP request over stdio or through the CLI daemon path.</div>
+            <div><strong>ToolHandler validates and serializes.</strong><br>Unknown arguments are rejected with actionable messages; a mutex keeps browser-facing tool execution orderly.</div>
+            <div><strong>McpContext resolves browser state.</strong><br>The context selects a page, detects DevTools windows, applies allow/block URL rules, and validates file paths for file-writing tools.</div>
+            <div><strong>McpResponse shapes output.</strong><br>Responses are summarized for humans and agents, with slim and structured-content modes for different clients.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="implementation">
+      <div class="shell">
+        <div class="section-head">
+          <div class="kicker">Implementation ideas</div>
+          <h2>The interesting part is not the browser automation. It is the contract.</h2>
+        </div>
+        <div class="tool-matrix">
+          <div><b>Page control</b><span>Listing, selecting, opening, navigating, resizing, and closing browser pages.</span></div>
+          <div><b>Input</b><span>Click, type, drag, upload, fill, and hover primitives over page snapshots.</span></div>
+          <div><b>Observation</b><span>Screenshots, screencast frames, DOM/text snapshots, console messages, and network requests.</span></div>
+          <div><b>Performance</b><span>Tracing, performance insight summaries, Lighthouse audits, and optional CrUX enrichment.</span></div>
+          <div><b>Memory</b><span>Heap snapshots and memory investigation tools, with large assets represented by references.</span></div>
+          <div><b>Script</b><span>Controlled script evaluation against the selected page.</span></div>
+          <div><b>Extensions</b><span>Off-by-default extension tools behind category flags.</span></div>
+          <div><b>CLI</b><span>An experimental terminal client that talks to a background daemon and preserves browser state.</span></div>
+        </div>
+        <div class="split-note" style="margin-top: 26px;">
+          <div>
+            <h3>Design principles visible in code</h3>
+            <p>The project's own guidance favors agent-agnostic APIs, token-optimized semantic summaries, small deterministic tools, self-healing errors, progressive complexity, and references instead of embedding heavy binary data directly in responses.</p>
+          </div>
+          <div>
+            <h3>Why that matters</h3>
+            <p>Browser automation creates huge, noisy artifacts. The project succeeds by converting raw DevTools data into bounded, composable, agent-readable observations, while still leaving escape hatches for power users and advanced diagnostics.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="product">
+      <div class="shell">
+        <div class="section-head">
+          <div class="kicker">Product insight</div>
+          <h2>The product is a debugging loop, not a dashboard.</h2>
+        </div>
+        <div class="grid-3">
+          <article class="card">
+            <h3>It meets agents where they work</h3>
+            <p>MCP support makes the server reusable across compatible clients instead of being tied to one assistant, IDE, or vendor workflow.</p>
+          </article>
+          <article class="card">
+            <h3>It keeps Chrome authoritative</h3>
+            <p>By sitting on top of DevTools, Puppeteer, Lighthouse, and trace-processing, the project uses browser-native evidence rather than synthetic approximations.</p>
+          </article>
+          <article class="card">
+            <h3>It exposes developer-grade escape hatches</h3>
+            <p>The CLI and daemon model let a developer use the same capabilities directly from a terminal, useful when an agent needs to generate scripts or when a human wants repeatable checks.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="risks">
+      <div class="shell">
+        <div class="section-head">
+          <div class="kicker">Strengths and risks</div>
+          <h2>Powerful because it is local; risky for exactly the same reason.</h2>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Strengths</h3>
+            <ul>
+              <li>Strong fit for frontend debugging, visual verification, performance diagnosis, and agentic QA loops.</li>
+              <li>Typed TypeScript codebase with generated docs, generated CLI, tests, release automation, and explicit tool categories.</li>
+              <li>Useful safety controls: URL allow/block patterns, file path validation, redacted network headers, opt-out telemetry, slim mode, and off-by-default experimental categories.</li>
+              <li>Official Chrome DevTools ownership gives it credibility and access to the underlying DevTools ecosystem.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Limitations and risks</h3>
+            <ul>
+              <li>The project explicitly warns that MCP clients can inspect, debug, and modify browser data, so sensitive sessions need isolation.</li>
+              <li>Live-browser automation can be nondeterministic: timing, dialogs, flaky pages, auth state, and dynamic content can all affect results.</li>
+              <li>Performance and memory features can produce heavy artifacts; the reference-over-value strategy helps, but clients still need good file/resource handling.</li>
+              <li>The CLI is marked experimental, and some server arguments or category-gated tools are not available through it.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="lessons">
+      <div class="shell">
+        <div class="section-head">
+          <div class="kicker">What developers can learn</div>
+          <h2>Good agent tooling is mostly interface design.</h2>
+        </div>
+        <div class="grid-2">
+          <div>
+            <p class="lead">The project is a useful reference for teams building agent-facing tools around existing systems. The hard part is not simply exposing every underlying API. The hard part is deciding what should be a small deterministic action, what should be summarized, what should be stored as a file, and what should be disabled unless a user opts in.</p>
+          </div>
+          <div class="card">
+            <ul>
+              <li>Prefer narrow tools over magical all-in-one actions.</li>
+              <li>Return semantic summaries before raw data.</li>
+              <li>Validate unknown arguments and produce repair-oriented errors.</li>
+              <li>Use capability negotiation so clients with different feature sets still work.</li>
+              <li>Make sensitive operations explicit, configurable, and documented.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sources">
+      <div class="shell">
+        <div class="section-head">
+          <div class="kicker">Sources</div>
+          <h2>Primary material used.</h2>
+        </div>
+        <div class="source-list">
+          <a href="https://github.com/trending">GitHub Trending</a>
+          <a href="https://github.com/ChromeDevTools/chrome-devtools-mcp">Repository home</a>
+          <a href="https://api.github.com/repos/ChromeDevTools/chrome-devtools-mcp">GitHub repository API metadata</a>
+          <a href="https://github.com/ChromeDevTools/chrome-devtools-mcp/blob/main/package.json">package.json</a>
+          <a href="https://github.com/ChromeDevTools/chrome-devtools-mcp/blob/main/server.json">server.json</a>
+          <a href="https://github.com/ChromeDevTools/chrome-devtools-mcp/tree/main/src">src tree</a>
+          <a href="https://github.com/ChromeDevTools/chrome-devtools-mcp/blob/main/src/index.ts">src/index.ts</a>
+          <a href="https://github.com/ChromeDevTools/chrome-devtools-mcp/blob/main/src/ToolHandler.ts">src/ToolHandler.ts</a>
+          <a href="https://github.com/ChromeDevTools/chrome-devtools-mcp/tree/main/src/tools">src/tools</a>
+          <a href="https://github.com/ChromeDevTools/chrome-devtools-mcp/blob/main/docs/design-principles.md">docs/design-principles.md</a>
+          <a href="https://github.com/ChromeDevTools/chrome-devtools-mcp/blob/main/docs/cli.md">docs/cli.md</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="shell">
+    Local report generated for the cc-connect scheduled GitHub Trending analysis task. No external assets or build step required.
+  </footer>
+</body>
+</html>

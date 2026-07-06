@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Herdr Engineering Analysis</title>
+  <style>
+    :root {
+      --bg: #f7f6f2;
+      --ink: #1d211f;
+      --muted: #626a64;
+      --line: #d8d5cc;
+      --panel: #ffffff;
+      --panel-2: #ece8de;
+      --accent: #b85f17;
+      --accent-dark: #743708;
+      --code: #202621;
+      --code-soft: #dfe7df;
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.55;
+    }
+
+    a { color: var(--accent-dark); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    .page { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+
+    .hero {
+      min-height: 74vh;
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr);
+      gap: 56px;
+      align-items: end;
+      padding: 58px 0 46px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      color: var(--accent-dark);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 34px;
+      height: 2px;
+      background: var(--accent);
+      display: inline-block;
+    }
+
+    h1 {
+      font-size: clamp(48px, 8vw, 104px);
+      line-height: .92;
+      letter-spacing: 0;
+      margin: 22px 0 24px;
+      max-width: 920px;
+    }
+
+    .dek {
+      max-width: 760px;
+      color: #333a35;
+      font-size: clamp(18px, 2.1vw, 24px);
+      line-height: 1.42;
+    }
+
+    .hero-panel {
+      background: var(--code);
+      color: #f2f5ee;
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: 0 22px 50px rgba(68, 54, 33, .16);
+    }
+
+    .terminal-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      color: #aeb9ad;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+    }
+
+    .pane-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      min-height: 270px;
+    }
+
+    .pane {
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 6px;
+      padding: 12px;
+      background: rgba(255,255,255,.035);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      color: #dbe6d9;
+      overflow: hidden;
+    }
+
+    .status {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: rgba(184, 95, 23, .22);
+      color: #ffc08b;
+      font-weight: 700;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      margin: 34px 0 0;
+    }
+
+    .metric {
+      background: var(--bg);
+      padding: 18px;
+      min-height: 104px;
+    }
+
+    .metric b {
+      display: block;
+      font-size: 24px;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    .metric span { color: var(--muted); font-size: 13px; }
+
+    section {
+      padding: 54px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 52px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      line-height: 1.25;
+    }
+
+    p { margin: 0 0 16px; }
+    .lead { font-size: 19px; color: #343934; max-width: 790px; }
+    .muted { color: var(--muted); }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
+    .box {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.42);
+      padding: 20px;
+    }
+
+    .box strong {
+      color: var(--accent-dark);
+    }
+
+    .architecture {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr 1fr;
+      gap: 14px;
+      margin-top: 26px;
+    }
+
+    .arch-node {
+      min-height: 168px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      background: var(--panel);
+    }
+
+    .arch-node .label {
+      color: var(--accent-dark);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .wide-note {
+      background: var(--panel-2);
+      border-left: 4px solid var(--accent);
+      padding: 20px 22px;
+      margin-top: 22px;
+    }
+
+    .list {
+      display: grid;
+      gap: 14px;
+      margin-top: 8px;
+    }
+
+    .item {
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      gap: 14px;
+      padding: 16px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .num {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: white;
+      display: inline-grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .code-card {
+      background: var(--code);
+      color: #edf2ea;
+      border-radius: var(--radius);
+      padding: 20px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+      overflow-x: auto;
+      margin-top: 18px;
+    }
+
+    .code-card .dim { color: #a6b0a5; }
+    .code-card .hot { color: #ffbb7b; }
+
+    .source-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 20px;
+      font-size: 14px;
+      padding-top: 8px;
+    }
+
+    footer {
+      padding: 28px 0 44px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 860px) {
+      .hero, .section-grid, .split, .architecture, .source-list {
+        grid-template-columns: 1fr;
+      }
+      .hero { min-height: auto; padding-top: 38px; gap: 30px; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .pane-grid { min-height: 210px; }
+    }
+
+    @media (max-width: 520px) {
+      .page { width: min(100% - 22px, 1180px); }
+      .metrics { grid-template-columns: 1fr; }
+      .pane-grid { grid-template-columns: 1fr; }
+      .hero-panel { padding: 14px; }
+      section { padding: 38px 0; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div>
+        <div class="eyebrow">GitHub Trending analysis · 2026-07-06 06:01 CST</div>
+        <h1>Herdr turns terminal multiplexing into an agent operations surface.</h1>
+        <p class="dek">The project is notable because it does not ask developers to leave the terminal, wrap agent UIs in a desktop shell, or wire bespoke hooks before they get fleet-level visibility.</p>
+      </div>
+      <aside class="hero-panel" aria-label="Terminal-style project summary">
+        <div class="terminal-top"><span>ogulcancelik/herdr</span><span>Rust · AGPL/commercial</span></div>
+        <div class="pane-grid">
+          <div class="pane"><span class="status">blocked</span><br>codex<br><br>needs approval<br>pane: repo-a</div>
+          <div class="pane"><span class="status">working</span><br>claude<br><br>running tests<br>pane: repo-b</div>
+          <div class="pane"><span class="status">done</span><br>opencode<br><br>patch ready<br>pane: api</div>
+          <div class="pane"><span class="status">idle</span><br>shell<br><br>server attached<br>ssh session</div>
+        </div>
+      </aside>
+    </header>
+
+    <div class="metrics" aria-label="Repository metrics">
+      <div class="metric"><b>12,001</b><span>GitHub stars at analysis time via repository API</span></div>
+      <div class="metric"><b>699</b><span>Forks, signaling rapid developer attention</span></div>
+      <div class="metric"><b>0.7.1</b><span>Crate/package version in Cargo.toml</span></div>
+      <div class="metric"><b>16</b><span>Socket API protocol version in generated schema</span></div>
+    </div>
+
+    <section>
+      <div class="section-grid">
+        <h2>Why This Project</h2>
+        <div>
+          <p class="lead">Herdr is a terminal workspace manager for AI coding agents: workspaces, tabs, panes, persistence, remote attach, agent status detection, CLI commands, and a local socket API in one Rust binary.</p>
+          <p>It was selected from GitHub Trending because it sits exactly where current developer tooling is moving: multi-agent coding workflows are becoming normal, but the coordination surface is still immature. Herdr’s pitch is pragmatic. Keep real PTYs, keep SSH, keep terminal muscle memory, and add just enough agent awareness to make many concurrent sessions manageable.</p>
+          <div class="wide-note">The README also carries a Trendshift badge stating that Herdr reached the number one GitHub Trending repository of the day on June 30, 2026. Combined with current Trending visibility, 12k stars, and recent pushes, that makes it both popular and timely.</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-grid">
+        <h2>What It Does</h2>
+        <div class="split">
+          <div class="box">
+            <h3>For humans</h3>
+            <p>Herdr behaves like a purpose-built tmux successor for AI work: real terminal panes, tabs, project-level workspaces, mouse interaction, keyboard prefix commands, background sessions, detach/reattach, and remote use over SSH.</p>
+          </div>
+          <div class="box">
+            <h3>For agents</h3>
+            <p>It exposes a local socket API so agents and scripts can create workspaces, split panes, spawn helpers, read output, subscribe to events, and wait for state changes instead of scraping or polling blindly.</p>
+          </div>
+          <div class="box">
+            <h3>For operations</h3>
+            <p>The sidebar rolls active panes into states such as blocked, working, done, idle, and unknown. This is the product insight: agent orchestration starts with seeing which loop needs attention.</p>
+          </div>
+          <div class="box">
+            <h3>For portability</h3>
+            <p>The implementation favors a single Rust binary, PTY-backed terminal runtime, local IPC, and server/client separation over a desktop app. Windows is still beta, while Linux and macOS are the stable center.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-grid">
+        <h2>Core Architecture</h2>
+        <div>
+          <p class="lead">Herdr is structured as a persistent server with attached terminal clients, PTY-backed runtime state, a Ratatui/crossterm interface, and a JSON-over-local-socket API.</p>
+          <div class="architecture">
+            <div class="arch-node">
+              <div class="label">Client surface</div>
+              <p>Ratatui and crossterm drive the terminal UI, including sidebar, tabs, panes, menus, copy mode, mouse handling, themes, onboarding, and status rendering.</p>
+            </div>
+            <div class="arch-node">
+              <div class="label">State and runtime</div>
+              <p>App state owns workspaces, tabs, pane focus, navigator rows, agent presentation state, terminal targets, plugin records, notifications, and mutation handling.</p>
+            </div>
+            <div class="arch-node">
+              <div class="label">PTY layer</div>
+              <p>The PTY actor/backend modules create real terminal processes. That lets fullscreen TUIs render as themselves rather than as interpreted agent transcripts.</p>
+            </div>
+            <div class="arch-node">
+              <div class="label">API server</div>
+              <p>The local socket server restricts socket permissions, parses JSON requests, dispatches through app channels, supports subscriptions, and emits event streams.</p>
+            </div>
+            <div class="arch-node">
+              <div class="label">Detection</div>
+              <p>Manifest-based rules combine process information, screen content, OSC title/progress, regex gates, and custom agent integrations to infer state.</p>
+            </div>
+            <div class="arch-node">
+              <div class="label">Persistence</div>
+              <p>Snapshot and restore modules preserve workspace structure and pane history; integration hooks can reconnect agents to their own native sessions after restart.</p>
+            </div>
+          </div>
+          <div class="code-card">
+            <span class="dim">Observed module map:</span><br>
+            src/app/* <span class="hot">state, actions, runtime, API adapters</span><br>
+            src/pty/* <span class="hot">real terminal process backend and actors</span><br>
+            src/api/* <span class="hot">schema, local socket server, subscriptions, wait helpers</span><br>
+            src/detect/* <span class="hot">agent manifests and state detection</span><br>
+            src/persist/* <span class="hot">snapshots, restore, plugin registry</span><br>
+            src/ui/* <span class="hot">Ratatui widgets and navigational surfaces</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-grid">
+        <h2>Implementation Ideas</h2>
+        <div class="list">
+          <div class="item"><span class="num">1</span><div><h3>Use a real terminal as the primitive</h3><p>Herdr’s strongest engineering decision is to treat each pane as a real terminal process. The product then adds layout, status, and API layers around that primitive rather than trying to reimplement terminal behavior inside a GUI shell.</p></div></div>
+          <div class="item"><span class="num">2</span><div><h3>Make status detection layered</h3><p>Built-in detection starts from process names and terminal output; manifests add repeatable rules; official integrations can add semantic status and session identity. This lets the system work out of the box while still giving high-value agents deeper paths.</p></div></div>
+          <div class="item"><span class="num">3</span><div><h3>Expose orchestration through IPC</h3><p>The socket API is not decorative. It turns Herdr from a terminal UI into an agent-operable runtime: create, split, read, subscribe, wait, and coordinate through stable request/response and event schemas.</p></div></div>
+          <div class="item"><span class="num">4</span><div><h3>Separate persistent runtime from attached view</h3><p>The background server means pane processes can survive client detach and laptop/SSH workflow changes. This is the old tmux insight, retargeted at coding-agent supervision.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-grid">
+        <h2>Product Insight</h2>
+        <div>
+          <p class="lead">Herdr’s product design is not “AI in the terminal.” It is “situational awareness for many AI terminals.” That distinction matters.</p>
+          <p>Most agent tools optimize the single conversation. Herdr optimizes the operator’s queue: which agent is blocked, which one is still working, which output has not been reviewed, and which workspace contains the urgent state. That turns a pile of shells into a small operations console without asking the developer to abandon their shell.</p>
+          <p>The comparison against tmux and GUI managers is also well positioned. tmux has persistence but no agent semantics. GUI managers have agent semantics but usually sacrifice terminal fidelity, remote convenience, or openness. Herdr claims the middle: terminal-native persistence plus agent awareness.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-grid">
+        <h2>Strengths and Risks</h2>
+        <div class="split">
+          <div class="box">
+            <h3>Strengths</h3>
+            <p><strong>Sharp wedge:</strong> the project solves a new pain created by concurrent coding agents.</p>
+            <p><strong>Technical fit:</strong> Rust, PTYs, local sockets, and Ratatui are coherent choices for a low-latency terminal tool.</p>
+            <p><strong>Extensibility:</strong> manifests, plugins, integrations, and API schemas give the ecosystem several entry points.</p>
+          </div>
+          <div class="box">
+            <h3>Risks and limits</h3>
+            <p><strong>Detection fragility:</strong> screen-output heuristics can break as agent CLIs change their UI.</p>
+            <p><strong>Platform edge cases:</strong> terminal input, SSH, clipboard images, Windows PTYs, and live handoff are hard cross-platform surfaces.</p>
+            <p><strong>License adoption:</strong> AGPL plus commercial licensing can be a good sustainability model, but it may slow some enterprise adoption.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-grid">
+        <h2>What Developers Can Learn</h2>
+        <div class="list">
+          <div class="item"><span class="num">A</span><div><h3>Do not over-abstract the user’s trusted environment</h3><p>Herdr’s appeal comes from honoring existing terminal and SSH workflows. Developer tools often win by augmenting the place where work already happens.</p></div></div>
+          <div class="item"><span class="num">B</span><div><h3>Make automation and UI share the same model</h3><p>The socket API and UI both sit on workspace, tab, pane, agent, and event concepts. That alignment reduces mismatch between what a human can see and what an agent can drive.</p></div></div>
+          <div class="item"><span class="num">C</span><div><h3>Ship heuristics, then add semantic integrations</h3><p>Waiting for every upstream agent to provide perfect state would stall the product. Herdr’s layered detection model gives immediate utility while leaving room for robust integrations.</p></div></div>
+          <div class="item"><span class="num">D</span><div><h3>Design for interruption as a first-class workflow</h3><p>Blocked and done states are not just labels; they encode the operator’s next action. Good agent tooling should reduce the cost of context switching across many concurrent loops.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-grid">
+        <h2>Sources</h2>
+        <div>
+          <p class="muted">Primary and repository-adjacent sources used for this analysis.</p>
+          <div class="source-list">
+            <a href="https://github.com/trending">GitHub Trending</a>
+            <a href="https://github.com/ogulcancelik/herdr">ogulcancelik/herdr repository</a>
+            <a href="https://api.github.com/repos/ogulcancelik/herdr">GitHub repository API metadata</a>
+            <a href="https://raw.githubusercontent.com/ogulcancelik/herdr/master/README.md">Repository README</a>
+            <a href="https://raw.githubusercontent.com/ogulcancelik/herdr/master/Cargo.toml">Cargo.toml</a>
+            <a href="https://raw.githubusercontent.com/ogulcancelik/herdr/master/docs/next/README.md">Documentation README</a>
+            <a href="https://raw.githubusercontent.com/ogulcancelik/herdr/master/docs/next/api/herdr-api.schema.json">Generated socket API schema</a>
+            <a href="https://github.com/ogulcancelik/herdr/tree/master/src">Source tree inspected locally</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="page">Generated as a local standalone HTML report. No external CSS, scripts, or build step required.</footer>
+</body>
+</html>
